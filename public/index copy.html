@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>🏋️‍♂️ SUPLEMAX - Suplementação em geral</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+  </div>
+  
+  <!-- HEADER SUPERIOR -->
+  <div class="header-top">
+    <div class="container">
+      <div class="header-top-content">
+        <div class="discount-tag">
+          <i class="fas fa-bolt"></i>
+          ATÉ 50% OFF NA BLACK FRIDAY
+        </div>
+        <div class="header-top-right">
+          <span>Frete grátis acima de R$ 150</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- HEADER PRINCIPAL -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <a href="#" class="logo">
+          <div class="logo-image-container">
+            <img src="imagem/banners/l2.png" alt="SUPLEMAX Logo" class="logo-image"
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/60/D32F2F/FFFFFF?text=SM';">
+          </div>
+          <div class="logo-text">
+            <div class="logo-main">SUPLE<span>MAX</span></div>
+            <div class="logo-sub">Suplementação em geral</div>
+          </div>
+        </a>
+        
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-box" placeholder="Buscar produtos..." id="search-input">
+        </div>
+        
+        <div class="header-actions">
+          <a href="#" class="header-action">
+            <div class="action-icon"><i class="far fa-user"></i></div>
+            <span>Minha Conta</span>
+          </a>
+          <a href="#" class="header-action">
+            <div class="action-icon"><i class="far fa-heart"></i></div>
+            <span>Favoritos</span>
+          </a>
+          <button class="header-action" id="cart-btn">
+            <div class="action-icon">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count">0</span>
+            </div>
+            <span>Carrinho</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- BANNER PRINCIPAL -->
+  <section class="banner-section">
+    <div class="container">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <img src="imagem/banners/banner1.png" alt="Whey Protein SUPLEMAX" class="banner-image">
+            <div class="banner-content"></div>
+          </div>
+          <div class="swiper-slide">
+            <img src="imagem/banners/banner2.png" alt="Creatina Monohidratada" class="banner-image">
+            <div class="banner-content"></div>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- MINI BANNERS -->
+  <section class="mini-banners section-sm">
+    <div class="container">
+      <div class="mini-banners-grid">
+        <div class="mini-banner">
+          <h3>ENTREGA RÁPIDA E SEGURA</h3>
+          <p>Enviamos para todo Brasil!</p>
+          <a href="#" class="banner-button">Saiba Mais</a>
+        </div>
+        <div class="mini-banner">
+          <h3>PARCELE EM ATÉ 6X</h3>
+          <p>No cartão de crédito.</p>
+          <a href="#" class="banner-button">Ver Condições</a>
+        </div>
+        <div class="mini-banner">
+          <h3>SOBRE A SUPLEMAX</h3>
+          <p>Conheça nossa história e compromisso com sua saúde.</p>
+          <a href="javascript:void(0)" onclick="openAbout()" class="banner-button">Conheça</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- CATEGORIAS -->
+  <section class="categories-section section" id="categories">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Categorias <span>SUPLEMAX</span></h2>
+        <a href="#" class="section-link">Ver todas as categorias <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="categories-grid" id="categories-grid"></div>
+    </div>
+  </section>
+  
+  <!-- PRODUTOS -->
+  <section class="products-section section" id="products">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Produtos <span>em Destaque</span></h2>
+        <div class="products-filter">
+          <button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
+          <button class="filter-btn" onclick="filterProducts('massa')">Whey Protein</button>
+          <button class="filter-btn" onclick="filterProducts('emagrecimento')">Creatina</button>
+          <button class="filter-btn" onclick="filterProducts('energia')">Pré-treino</button>
+          <button class="filter-btn" onclick="filterProducts('saude')">Vitaminas</button>
+        </div>
+      </div>
+      <div class="products-grid" id="products-grid"></div>
+      <div class="view-more">
+        <button class="btn-view-more" id="load-more"><i class="fas fa-plus"></i> Carregar Mais Produtos</button>
+      </div>
+    </div>
+  </section>
+  
+  <!-- BENEFÍCIOS -->
+  <section class="benefits-section section">
+    <div class="container">
+      <h2 class="section-title text-center mb-6">Por que escolher a <span>SUPLEMAX</span>?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3 class="benefit-title">Qualidade Garantida</h3>
+          <p class="text-gray">Todos os produtos são testados em laboratório e possuem certificação ANVISA.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-truck"></i></div>
+          <h3 class="benefit-title">Entrega Rápida</h3>
+          <p class="text-gray">Entregamos para todo Brasil com prazo de 3 a 10 dias úteis.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-credit-card"></i></div>
+          <h3 class="benefit-title">Pagamento Seguro</h3>
+          <p class="text-gray">Site 100% seguro com criptografia e diversas formas de pagamento.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-headset"></i></div>
+          <h3 class="benefit-title">Suporte 24/7</h3>
+          <p class="text-gray">Equipe especializada pronta para atender suas dúvidas a qualquer hora.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- NEWSLETTER -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-content">
+        <h2 class="newsletter-title">Fique por dentro das novidades</h2>
+        <p class="newsletter-subtitle">Receba ofertas exclusivas, dicas de treino e nutrição direto no seu e-mail.</p>
+        <form class="newsletter-form" id="newsletter-form">
+          <input type="email" class="newsletter-input" placeholder="Seu melhor e-mail" required>
+          <button type="submit" class="btn-newsletter"><i class="fas fa-paper-plane"></i> Inscrever-se</button>
+        </form>
+      </div>
+    </div>
+  </section>
+  
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <div class="footer-logo">SUPLE<span>MAX</span></div>
+          <p class="footer-description">Há mais de 10 anos no mercado, oferecemos os melhores suplementos com qualidade garantida e preços competitivos.</p>
+          <div class="social-links">
+            <a href="https://www.instagram.com/_suplemax_cr/" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3>Links Rápidos</h3>
+          <ul class="footer-links">
+            <li><a href="https://suplemaxxx.netlify.app/"><i class="fas fa-chevron-right"></i> Início</a></li>
+            <li><a href="#products"><i class="fas fa-chevron-right"></i> Produtos</a></li>
+            <li><a href="#categories"><i class="fas fa-chevron-right"></i> Categorias</a></li>
+            <li><a href="#products"><i class="fas fa-chevron-right"></i> Ofertas</a></li>
+            <li><a href="https://www.instagram.com/_suplemax_cr/"><i class="fas fa-chevron-right"></i> Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Categorias</h3>
+          <ul class="footer-links">
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Massa Muscular</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Emagrecimento</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Energia e Desempenho</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Saúde e Qualidade de Vida</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Contato</h3>
+          <ul class="contact-info">
+            <li><i class="fas fa-phone"></i><span>(11) 99999-9999<br><small>Seg a Sex: 8h às 18h</small></span></li>
+            <li><i class="fas fa-envelope"></i><span>contato@suplemax.com.br</span></li>
+            <li><i class="fas fa-map-marker-alt"></i><span>Av. Paulista, 1000<br>São Paulo - SP</span></li>
+          </ul>
+          <div class="payment-methods">
+            <h4>Formas de Pagamento</h4>
+            <div class="payment-icons">
+              <div class="payment-icon">PIX</div>
+              <div class="payment-icon">VISA</div>
+              <div class="payment-icon">MC</div>
+              <div class="payment-icon">ELO</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2024 SUPLEMAX - Suplementos Premium. Todos os direitos reservados. CNPJ: 00.000.000/0001-00</p>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- CARRINHO -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+      <h2><i class="fas fa-shopping-cart"></i> Seu Carrinho</h2>
+      <button class="cart-btn" onclick="closeCart()" style="font-size: 20px;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div class="coupon-section">
+      <div class="coupon-form">
+        <input type="text" class="coupon-input" id="coupon-input" placeholder="Digite seu cupom de desconto">
+        <button class="btn-coupon" onclick="applyCoupon()">Aplicar</button>
+      </div>
+      <div id="coupon-message" style="margin-top: 8px; font-size: 13px;"></div>
+    </div>
+    <div class="cart-summary" id="cart-summary"></div>
+    <div class="checkout-form">
+      <div class="form-group">
+        <label for="customer-name">Nome Completo *</label>
+        <input type="text" id="customer-name" placeholder="Digite seu nome" required>
+      </div>
+      <div class="form-group">
+        <label for="customer-phone">WhatsApp *</label>
+        <input type="tel" id="customer-phone" placeholder="(11) 99999-9999" required>
+      </div>
+      <h4>Endereço de Entrega</h4>
+      <div class="form-group">
+        <label for="customer-cep">CEP *</label>
+        <input type="text" id="customer-cep" placeholder="00000-000" required>
+      </div>
+      <div class="form-group">
+        <label for="customer-address">Endereço *</label>
+        <input type="text" id="customer-address" placeholder="Rua, Av, etc" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="customer-number">Número *</label>
+          <input type="text" id="customer-number" placeholder="Nº" required>
+        </div>
+        <div class="form-group">
+          <label for="customer-complement">Complemento</label>
+          <input type="text" id="customer-complement" placeholder="Apto, bloco">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="customer-neighborhood">Bairro *</label>
+        <input type="text" id="customer-neighborhood" placeholder="Bairro" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="customer-city">Cidade *</label>
+          <input type="text" id="customer-city" placeholder="Cidade" required>
+        </div>
+        <div class="form-group">
+          <label for="customer-state">UF *</label>
+          <input type="text" id="customer-state" placeholder="UF" maxlength="2" required>
+        </div>
+      </div>
+      <h4>Forma de Pagamento</h4>
+      <div class="payment-options">
+        <label><input type="radio" name="payment" value="PIX" checked> PIX</label>
+        <label><input type="radio" name="payment" value="Cartão de Crédito"> Cartão de Crédito</label>
+        <label><input type="radio" name="payment" value="Boleto"> Boleto</label>
+      </div>
+      <button class="checkout-btn" id="checkout-btn"><i class="fab fa-whatsapp"></i> FINALIZAR PEDIDO</button>
+    </div>
+  </div>
+  
+  <!-- SOBRE NÓS MODAL -->
+  <div class="about-overlay" id="about-overlay" onclick="closeAbout()"></div>
+  <div class="about-modal" id="about-modal">
+    <div class="about-header">
+      <h2><i class="fas fa-info-circle"></i> Sobre a SUPLEMAX</h2>
+      <button class="close-about" onclick="closeAbout()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="about-content">
+      <h3>🏋️‍♂️ Nossa História</h3>
+      <p>Fundada em 2014, a SUPLEMAX nasceu da paixão pelo esporte e pela saúde...</p>
+      <h3>🎯 Missão</h3>
+      <p>Proporcionar saúde, bem-estar e performance através de suplementos de qualidade...</p>
+      <div class="about-highlight"><p><i class="fas fa-quote-left"></i> Mais de 100.000 clientes atendidos, 50.000 pedidos entregues e uma avaliação média de 4.9 estrelas.</p></div>
+      <h3>🌟 Valores</h3>
+      <div class="values-grid">
+        <div class="value-item"><div class="value-icon"><i class="fas fa-flask"></i></div><h4>Qualidade</h4><p>Produtos testados e aprovados</p></div>
+        <div class="value-item"><div class="value-icon"><i class="fas fa-hand-holding-heart"></i></div><h4>Transparência</h4><p>Informações claras e honestas</p></div>
+        <div class="value-item"><div class="value-icon"><i class="fas fa-rocket"></i></div><h4>Inovação</h4><p>Sempre atualizados com o mercado</p></div>
+        <div class="value-item"><div class="value-icon"><i class="fas fa-users"></i></div><h4>Comunidade</h4><p>Valorizamos cada cliente</p></div>
+      </div>
+      <h3>🌎 Compromisso Social e Ambiental</h3>
+      <p>Além de cuidar da sua saúde, nos preocupamos com o planeta...</p>
+      <p style="margin-top: var(--space-xl); font-weight: 600; color: var(--primary); text-align: center;">SUPLEMAX – Mais que suplementos, uma parceria pela sua melhor versão!</p>
+    </div>
+  </div>
+  
+  <!-- MODAL DE DETALHES DO PRODUTO -->
+  <div class="product-modal-overlay" id="product-modal-overlay" onclick="closeProductModal(event)">
+    <div class="product-modal" id="product-modal" onclick="event.stopPropagation()">
+      <div class="product-modal-header">
+        <h2 id="modal-product-name">Detalhes do Produto</h2>
+        <button class="close-product-modal" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="product-modal-content">
+        <div class="product-modal-gallery">
+          <img src="" alt="Produto" class="main-image" id="modal-main-image">
+          <div class="thumbnail-list" id="modal-thumbnails"></div>
+        </div>
+        <div class="product-modal-info">
+          <span class="product-modal-category" id="modal-category"></span>
+          <h3 class="product-modal-title" id="modal-title"></h3>
+          <div class="product-modal-rating">
+            <div class="stars" id="modal-stars"></div>
+            <span class="rating-count" id="modal-rating-count"></span>
+          </div>
+          <div class="product-modal-price">
+            <span class="product-modal-current" id="modal-current-price"></span>
+            <span class="product-modal-original" id="modal-original-price"></span>
+          </div>
+          <div class="product-modal-installment" id="modal-installment"></div>
+          <div class="product-modal-stock" id="modal-stock"></div>
+          <div class="product-modal-tabs">
+            <button class="tab-btn active" onclick="switchTab('descricao')">Descrição</button>
+            <button class="tab-btn" onclick="switchTab('avaliacoes')">Avaliações</button>
+            <button class="tab-btn" onclick="switchTab('info')">Informações</button>
+          </div>
+          <div class="tab-content" id="modal-tab-content"></div>
+          <div class="product-modal-actions">
+            <button class="btn-primary" id="modal-add-to-cart" onclick="addToCartFromModal()"><i class="fas fa-shopping-cart"></i> ADICIONAR AO CARRINHO</button>
+            <button class="btn-secondary" onclick="addToWishlistFromModal()"><i class="far fa-heart"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- NOTIFICAÇÃO -->
+  <div class="notification" id="notification"></div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
