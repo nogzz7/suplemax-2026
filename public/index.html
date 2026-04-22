@@ -261,7 +261,6 @@
       <div id="coupon-message" style="margin-top: 8px; font-size: 13px;"></div>
     </div>
     <div class="cart-summary" id="cart-summary"></div>
-    <!-- Botão Continuar Comprando -->
     <div style="padding: 0 var(--space-lg) var(--space-lg);">
       <button class="continue-shopping-btn" onclick="closeCart()">
         <i class="fas fa-arrow-left"></i> Continuar Comprando
@@ -345,7 +344,7 @@
     </div>
   </div>
   
-  <!-- MODAL DE DETALHES DO PRODUTO -->
+  <!-- MODAL DE DETALHES DO PRODUTO (COM BOTÕES VERDES) -->
   <div class="product-modal-overlay" id="product-modal-overlay" onclick="closeProductModal(event)">
     <div class="product-modal" id="product-modal" onclick="event.stopPropagation()">
       <div class="product-modal-header">
@@ -364,7 +363,6 @@
             <div class="stars" id="modal-stars"></div>
             <span class="rating-count" id="modal-rating-count"></span>
           </div>
-          <!-- Container para botões de sabores -->
           <div id="product-flavors-container" class="product-flavors" style="margin: 1rem 0;"></div>
           <div class="product-modal-price">
             <span class="product-modal-current" id="modal-current-price"></span>
@@ -379,8 +377,15 @@
           </div>
           <div class="tab-content" id="modal-tab-content"></div>
           <div class="product-modal-actions">
-            <button class="btn-primary" id="modal-add-to-cart" onclick="addToCartFromModal()"><i class="fas fa-shopping-cart"></i> ADICIONAR AO CARRINHO</button>
-            <button class="btn-secondary" onclick="addToWishlistFromModal()"><i class="far fa-heart"></i></button>
+            <button class="btn-primary" id="modal-add-to-cart" onclick="addToCartFromModal()">
+              <i class="fas fa-shopping-cart"></i> ADICIONAR AO CARRINHO
+            </button>
+            <button class="btn-continue" onclick="closeProductModal()">
+              <i class="fas fa-arrow-left"></i> CONTINUAR COMPRANDO
+            </button>
+            <button class="btn-secondary" onclick="addToWishlistFromModal()">
+              <i class="far fa-heart"></i>
+            </button>
           </div>
         </div>
       </div>

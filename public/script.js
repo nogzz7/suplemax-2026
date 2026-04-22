@@ -38,7 +38,7 @@ function closeAbout() {
   document.body.style.overflow = 'auto';
 }
 
-// ========== FUNÇÕES DO MODAL DE PRODUTO (com sabores) ==========
+// ========== FUNÇÕES DO MODAL DE PRODUTO ==========
 function openProductModal(productId) {
   const product = products.find(p => p.id == productId);
   if (!product) return;
@@ -89,7 +89,7 @@ function openProductModal(productId) {
   }
   document.getElementById('modal-thumbnails').innerHTML = thumbnailsHtml;
 
-  // Botões de sabores
+  // Sabores adicionais
   const flavorsContainer = document.getElementById('product-flavors-container');
   flavorsContainer.innerHTML = '';
   if (product.metadata?.flavors && product.metadata.flavors.length > 0) {
@@ -201,7 +201,7 @@ const categoryNames = {
   'saude': 'Vitaminas'
 };
 
-// ========== CARREGAR CATEGORIAS ==========
+// ========== CARREGAR DADOS ==========
 async function loadCategories() {
   try {
     const res = await fetch(`${API_BASE}/categories`);
@@ -213,7 +213,6 @@ async function loadCategories() {
   }
 }
 
-// ========== CARREGAR PRODUTOS ==========
 async function loadProducts() {
   try {
     const res = await fetch(`${API_BASE}/products`);
@@ -364,7 +363,7 @@ function calculateDiscount(subtotal, shipping) {
   return Math.round(discount * 100) / 100;
 }
 
-// ========== CARRINHO (com suporte a sabor) ==========
+// ========== CARRINHO ==========
 function addToCart(productId, flavor = null) {
   const product = products.find(p => p.id == productId);
   if (!product) return showNotification('Produto não encontrado', 'error');

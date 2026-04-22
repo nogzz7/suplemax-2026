@@ -62,7 +62,7 @@ html {
 
 body {
   font-family: var(--font-body);
-  background: rgb(255, 255, 255);
+  background: var(--white);
   color: var(--secondary);
   line-height: 1.5;
   overflow-x: hidden;
@@ -121,7 +121,7 @@ input, select, textarea {
 }
 
 .text-primary {
-  color: var(--accent-dark);
+  color: var(--primary);
 }
 
 .text-gray {
@@ -134,7 +134,7 @@ input, select, textarea {
 
 /* ===== HEADER SUPERIOR ===== */
 .header-top {
-  background: linear-gradient(90deg, var(--accent-dark) 0%, var(--secondary-light) 100%);
+  background: linear-gradient(90deg, var(--secondary) 0%, var(--secondary-light) 100%);
   color: var(--white);
   padding: var(--space-sm) 0;
   font-size: 14px;
@@ -150,7 +150,7 @@ input, select, textarea {
 }
 
 .discount-tag {
-  background: rgba(180, 180, 180, 0.2);
+  background: rgba(255,255,255,0.2);
   padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-full);
   font-weight: 600;
@@ -166,7 +166,7 @@ input, select, textarea {
 
 /* ===== HEADER PRINCIPAL ===== */
 .main-header {
-  background: rgb(255, 255, 255);
+  background: var(--white);
   border-bottom: 1px solid var(--gray-200);
   position: sticky;
   top: 0;
@@ -198,7 +198,7 @@ input, select, textarea {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: rgb(255, 255, 255);
+  background: var(--white);
 }
 
 .logo-image {
@@ -1178,7 +1178,7 @@ footer {
   border-top: 2px solid var(--primary);
 }
 
-/* Botão Continuar Comprando */
+/* Botão Continuar Comprando (no carrinho) */
 .continue-shopping-btn {
   width: 100%;
   padding: var(--space-md);
@@ -1629,43 +1629,60 @@ footer {
   overflow-y: auto;
 }
 
+/* ===== BOTÕES DO MODAL PRODUTO (VERDES) ===== */
 .product-modal-actions {
   display: flex;
-  gap: var(--space-md);
+  gap: 12px;
   margin-top: var(--space-xl);
+  flex-wrap: wrap;
 }
 
-.product-modal-actions .btn-primary {
-  flex: 2;
-  padding: var(--space-lg);
-  font-size: 16px;
-  background: var(--primary);
+.product-modal-actions .btn-primary,
+.product-modal-actions .btn-continue {
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
   color: white;
+  border: none;
+  padding: 14px 20px;
+  font-weight: 800;
   border-radius: var(--radius-md);
-  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 0.9rem;
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
 }
 
-.product-modal-actions .btn-primary:hover {
-  background: var(--primary-dark);
+.product-modal-actions .btn-primary:hover,
+.product-modal-actions .btn-continue:hover {
+  background: linear-gradient(135deg, #1B5E20 0%, #0D3B0F 100%);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46,125,50,0.3);
 }
 
 .product-modal-actions .btn-secondary {
-  flex: 0 0 60px;
-  height: 60px;
-  font-size: 20px;
-  background: var(--gray-200);
+  flex: 0 0 54px;
+  height: 54px;
+  background-color: var(--gray-100);
+  border: 1px solid var(--gray-300);
   border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 1.2rem;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .product-modal-actions .btn-secondary:hover {
-  background: var(--primary-light);
+  background-color: var(--primary-light);
   color: var(--primary);
+  border-color: var(--primary);
 }
 
-/* Estilo para botões de sabor */
 .flavor-option {
   padding: 8px 16px;
   background: var(--gray-100);
