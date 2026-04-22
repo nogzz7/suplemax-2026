@@ -32,7 +32,7 @@
           ATÉ 50% OFF NA BLACK FRIDAY
         </div>
         <div class="header-top-right">
-          <span>Frete grátis acima de R$ 150</span>
+          <span>Frete grátis em todos os pedidos!</span>
         </div>
       </div>
     </div>
@@ -44,7 +44,7 @@
       <div class="header-content">
         <a href="#" class="logo">
           <div class="logo-image-container">
-            <img src="https://i.ibb.co/7tgvPFVc/l2.png" alt="SUPLEMAX Logo" class="logo-image"
+            <img src="https://i.ibb.co/SwR5Qmp1/l2.png" alt="SUPLEMAX Logo" class="logo-image"
                  onerror="this.onerror=null; this.src='https://via.placeholder.com/60/D32F2F/FFFFFF?text=SM';">
           </div>
           <div class="logo-text">
@@ -96,6 +96,55 @@
     </div>
   </section>
   
+  <!-- SEÇÃO FLASH SALE - PRODUTOS EM PROMOÇÃO -->
+  <section class="flash-sale-section">
+    <div class="container">
+      <div class="flash-sale-header">
+        <div class="flash-sale-title-group">
+          <div class="flash-sale-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div class="flash-sale-text">
+            <span class="flash-sale-badge">LIMITED TIME</span>
+            <h2 class="flash-sale-title">OFERTAS <span>IMPERDÍVEIS</span></h2>
+            <p class="flash-sale-subtitle">Até 50% OFF em produtos selecionados</p>
+          </div>
+        </div>
+        <div class="flash-sale-timer" id="flash-sale-timer">
+          <div class="timer-block">
+            <span class="timer-number" id="timer-days">00</span>
+            <span class="timer-label">Dias</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-hours">00</span>
+            <span class="timer-label">Horas</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-minutes">00</span>
+            <span class="timer-label">Min</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-seconds">00</span>
+            <span class="timer-label">Seg</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flash-sale-products" id="flash-sale-products">
+        <!-- Produtos em promoção serão carregados via JavaScript -->
+      </div>
+      
+      <div class="flash-sale-footer">
+        <a href="#" class="btn-view-all" onclick="filterProducts('all')">
+          Ver todas as ofertas <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+  
   <!-- MINI BANNERS -->
   <section class="mini-banners section-sm">
     <div class="container">
@@ -103,17 +152,17 @@
         <div class="mini-banner">
           <h3>ENTREGA RÁPIDA E SEGURA</h3>
           <p>Enviamos para todo Brasil!</p>
-          <a href="#" class="banner-button" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">Saiba Mais</a>
+          <a href="#" class="banner-button">Saiba Mais</a>
         </div>
         <div class="mini-banner">
           <h3>PARCELE EM ATÉ 6X</h3>
           <p>No cartão de crédito.</p>
-          <a href="#" class="banner-button" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">Ver Condições</a>
+          <a href="#" class="banner-button">Ver Condições</a>
         </div>
         <div class="mini-banner">
           <h3>SOBRE A SUPLEMAX</h3>
           <p>Conheça nossa história e compromisso com sua saúde.</p>
-          <a href="javascript:void(0)" onclick="openAbout()" class="banner-button" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">Conheça</a>
+          <a href="javascript:void(0)" onclick="openAbout()" class="banner-button">Conheça</a>
         </div>
       </div>
     </div>
@@ -205,11 +254,11 @@
         <div class="footer-column">
           <h3>Links Rápidos</h3>
           <ul class="footer-links">
-            <li><a href="https://suplemaxxx.netlify.app/"><i class="fas fa-chevron-right"></i> Início</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Início</a></li>
             <li><a href="#products"><i class="fas fa-chevron-right"></i> Produtos</a></li>
             <li><a href="#categories"><i class="fas fa-chevron-right"></i> Categorias</a></li>
             <li><a href="#products"><i class="fas fa-chevron-right"></i> Ofertas</a></li>
-            <li><a href="https://www.instagram.com/_suplemax_cr/"><i class="fas fa-chevron-right"></i> Blog</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Blog</a></li>
           </ul>
         </div>
         <div class="footer-column">
@@ -253,18 +302,13 @@
       <button class="cart-btn" onclick="closeCart()" style="font-size: 20px;"><i class="fas fa-times"></i></button>
     </div>
     <div class="cart-items" id="cart-items"></div>
+    <div class="cart-summary" id="cart-summary"></div>
     <div class="coupon-section">
       <div class="coupon-form">
         <input type="text" class="coupon-input" id="coupon-input" placeholder="Digite seu cupom de desconto">
         <button class="btn-coupon" onclick="applyCoupon()">Aplicar</button>
       </div>
       <div id="coupon-message" style="margin-top: 8px; font-size: 13px;"></div>
-    </div>
-    <div class="cart-summary" id="cart-summary"></div>
-    <div style="padding: 0 var(--space-lg) var(--space-lg);">
-      <button class="continue-shopping-btn" onclick="closeCart()">
-        <i class="fas fa-arrow-left"></i> Continuar Comprando
-      </button>
     </div>
     <div class="checkout-form">
       <div class="form-group">
@@ -344,7 +388,7 @@
     </div>
   </div>
   
-  <!-- MODAL DE DETALHES DO PRODUTO (COM BOTÕES VERDES) -->
+  <!-- MODAL DE DETALHES DO PRODUTO -->
   <div class="product-modal-overlay" id="product-modal-overlay" onclick="closeProductModal(event)">
     <div class="product-modal" id="product-modal" onclick="event.stopPropagation()">
       <div class="product-modal-header">
@@ -355,6 +399,7 @@
         <div class="product-modal-gallery">
           <img src="" alt="Produto" class="main-image" id="modal-main-image">
           <div class="thumbnail-list" id="modal-thumbnails"></div>
+          <div class="product-details-under-gallery" id="product-details-under-gallery"></div>
         </div>
         <div class="product-modal-info">
           <span class="product-modal-category" id="modal-category"></span>
@@ -377,25 +422,20 @@
           </div>
           <div class="tab-content" id="modal-tab-content"></div>
           <div class="product-modal-actions">
-            <button class="btn-primary" id="modal-add-to-cart" onclick="addToCartFromModal()">
-              <i class="fas fa-shopping-cart"></i> ADICIONAR AO CARRINHO
-            </button>
-            <button class="btn-continue" onclick="closeProductModal()">
-              <i class="fas fa-arrow-left"></i> CONTINUAR COMPRANDO
-            </button>
-            <button class="btn-secondary" onclick="addToWishlistFromModal()">
-              <i class="far fa-heart"></i>
-            </button>
+            <button class="btn-primary" id="modal-add-to-cart" onclick="addToCartFromModal()"><i class="fas fa-shopping-cart"></i> ADICIONAR</button>
+            <button class="btn-continue" onclick="closeProductModal()"><i class="fas fa-arrow-left"></i> CONTINUAR COMPRANDO</button>
+            <button class="btn-secondary" onclick="addToWishlistFromModal()"><i class="far fa-heart"></i></button>
           </div>
         </div>
       </div>
     </div>
   </div>
   
-  <!-- NOTIFICAÇÃO -->
   <div class="notification" id="notification"></div>
   
+  <!-- Bibliotecas externas -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <!-- Código principal -->
   <script src="script.js"></script>
 </body>
 </html>
