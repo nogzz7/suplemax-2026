@@ -330,7 +330,7 @@ input, select, textarea {
 /* FLASH SALE */
 .flash-sale-section {
   padding: var(--space-2xl) 0;
-  background: linear-gradient(135deg, #FFF5F5 0%, #FFEBEE 100%);
+  background: linear-gradient(135deg, #000000 0%, #ffffff 100%);
   position: relative;
   overflow: hidden;
 }
@@ -366,7 +366,7 @@ input, select, textarea {
 .flash-sale-icon {
   width: 70px;
   height: 70px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, black 0%, var(--primary-dark) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -376,7 +376,7 @@ input, select, textarea {
 
 .flash-sale-icon i {
   font-size: 32px;
-  color: var(--white);
+  color: black;
 }
 
 @keyframes pulse-icon {
@@ -552,14 +552,14 @@ input, select, textarea {
 
 .flash-sale-price .original {
   font-size: 14px;
-  color: var(--gray-500);
+  color: red;
   text-decoration: line-through;
 }
 
 .flash-sale-price .current {
   font-size: 24px;
   font-weight: 900;
-  color: var(--primary);
+  color: green;
 }
 
 .flash-sale-price .discount-badge {
@@ -588,7 +588,7 @@ input, select, textarea {
 .btn-flash-sale {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, black 100%);
   color: white;
   border: none;
   border-radius: var(--radius-md);
