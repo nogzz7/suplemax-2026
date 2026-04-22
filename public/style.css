@@ -62,7 +62,7 @@ html {
 
 body {
   font-family: var(--font-body);
-  background: rgb(32, 32, 32);
+  background: rgb(255, 255, 255);
   color: var(--secondary);
   line-height: 1.5;
   overflow-x: hidden;
@@ -150,7 +150,7 @@ input, select, textarea {
 }
 
 .discount-tag {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(180, 180, 180, 0.2);
   padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-full);
   font-weight: 600;
@@ -166,7 +166,7 @@ input, select, textarea {
 
 /* ===== HEADER PRINCIPAL ===== */
 .main-header {
-  background: rgb(36, 36, 36);
+  background: rgb(255, 255, 255);
   border-bottom: 1px solid var(--gray-200);
   position: sticky;
   top: 0;
@@ -198,7 +198,7 @@ input, select, textarea {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: rgb(36, 36, 36);
+  background: rgb(255, 255, 255);
 }
 
 .logo-image {
