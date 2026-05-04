@@ -15,6 +15,25 @@ let activeCoupon = null;
 let currentProduct = null;
 let currentSelectedFlavor = null;
 
+// ========== [TAXA] TAXAS CARTÃO DE CRÉDITO ==========
+const cardFees = {
+  1: 4.20,
+  2: 6.09,
+  3: 7.01,
+  4: 7.91,
+  5: 8.80,
+  6: 9.67
+};
+
+function calculateTotalWithCardFee(subtotal, discount, installments) {
+  const subtotalAfterDiscount = subtotal - discount;
+  const feePercent = (cardFees[installments] || 0) / 100;
+  const feeAmount = subtotalAfterDiscount * feePercent;
+  const total = subtotalAfterDiscount + feeAmount;
+  return { total, feeAmount, feePercent };
+}
+// ========== FIM [TAXA] ==========
+
 // ========== SISTEMA DE CUPONS ==========
 const coupons = {
   'BLACKFRIDAY2024': { discount: 20, type: 'percentage', description: '20% OFF na Black Friday' },
@@ -68,7 +87,14 @@ function openProductModal(productId) {
   } else {
     document.getElementById('modal-original-price').style.display = 'none';
   }
-  document.getElementById('modal-installment').innerHTML = `em até <strong>6x de R$ ${(toNumber(product.price) / 6).toFixed(2)}</strong> sem juros`;
+  
+  // ========== [TAXA] Parcelamento no modal com taxa máxima (6x) ==========
+  const maxInstallments = 6;
+  const feePercent = cardFees[maxInstallments] / 100;
+  const priceWithFee = toNumber(product.price) * (1 + feePercent);
+  const installmentValue = priceWithFee / maxInstallments;
+  document.getElementById('modal-installment').innerHTML = `em até <strong>${maxInstallments}x de R$ ${installmentValue.toFixed(2)}</strong> ${feePercent > 0 ? `(juros de ${cardFees[maxInstallments]}% incluídos)` : 'sem juros'}`;
+  // ========== FIM [TAXA] ==========
   
   const inStock = product.inventory > 0;
   document.getElementById('modal-stock').innerHTML = inStock 
@@ -80,7 +106,6 @@ function openProductModal(productId) {
   const extraImages = product.metadata?.images || [];
   const oldImages = [product.image_2, product.image_3].filter(img => img && img.trim() !== '');
   let allImages = [mainImage, ...extraImages, ...oldImages];
-  // Remove duplicatas (set)
   allImages = [...new Set(allImages)];
   
   if (allImages.length === 0) {
@@ -275,10 +300,9 @@ function renderProducts() {
     const cat = categories.find(c => c.slug === product.collection);
     const catName = cat ? cat.name : (categoryNames[product.collection] || product.collection);
     const imgUrl = product.image_url || product.image_1 || 'https://picsum.photos/220/220?random=prod';
-    const outOfStockClass = isOutOfStock ? 'out-of-stock-overlay' : '';
     const overlayHtml = isOutOfStock ? `<div class="out-of-stock-label">ESGOTADO</div>` : '';
     
-    return `<div class="product-card ${outOfStockClass}">
+    return `<div class="product-card">
       <div class="product-badges">
         ${isOnSale ? `<div class="badge badge-sale">${salePercentage}% OFF</div>` : ''}
         ${isNew ? `<div class="badge badge-new">Novo</div>` : ''}
@@ -496,6 +520,7 @@ function updateCartUI() {
   renderCartItems();
 }
 
+// ========== [TAXA] Função renderCartItems modificada para incluir juros ==========
 function renderCartItems() {
   const container = document.getElementById('cart-items');
   const summary = document.getElementById('cart-summary');
@@ -525,17 +550,35 @@ function renderCartItems() {
       </div>
     </div>`;
   }).join('');
+  
   const subtotal = cart.reduce((s, i) => s + toNumber(i.price) * i.quantity, 0);
-  const shipping = 0;
-  const discount = calculateDiscount(subtotal, shipping);
-  const total = Math.max(0, subtotal + shipping - discount);
+  const discount = calculateDiscount(subtotal, 0);
+  
+  // [TAXA] Verifica forma de pagamento e parcelas
+  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value;
+  let installments = 1;
+  let feeAmount = 0;
+  let totalWithFee = subtotal - discount;
+  
+  if (paymentMethod === 'Cartão de Crédito') {
+    const installmentSelect = document.getElementById('installments');
+    if (installmentSelect) installments = parseInt(installmentSelect.value);
+    const { total, feeAmount: fee } = calculateTotalWithCardFee(subtotal, discount, installments);
+    totalWithFee = total;
+    feeAmount = fee;
+  }
+  // ========== FIM [TAXA] ==========
+  
   summary.innerHTML = `
     <div class="summary-row"><span>Subtotal:</span><span>R$ ${subtotal.toFixed(2)}</span></div>
     <div class="summary-row"><span>Frete:</span><span>Grátis</span></div>
-    ${activeCoupon ? `<div class="summary-row discount-row"><span>Desconto (${activeCoupon.code}):</span><span>- R$ ${discount.toFixed(2)}</span><button onclick="removeCoupon()" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-times"></i></button></div>` : ''}
-    <div class="summary-row summary-total"><span>Total:</span><span>R$ ${total.toFixed(2)}</span></div>
+    ${discount > 0 ? `<div class="summary-row discount-row"><span>Desconto (${activeCoupon?.code || ''}):</span><span>- R$ ${discount.toFixed(2)}</span></div>` : ''}
+    ${feeAmount > 0 ? `<div class="summary-row"><span>Juros cartão (${installments}x):</span><span>R$ ${feeAmount.toFixed(2)}</span></div>` : ''}
+    ${activeCoupon ? `<div class="summary-row discount-row"><span>Cupom ${activeCoupon.code}:</span><span>- R$ ${discount.toFixed(2)}</span><button onclick="removeCoupon()" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-times"></i></button></div>` : ''}
+    <div class="summary-row summary-total"><span>Total:</span><span>R$ ${totalWithFee.toFixed(2)}</span></div>
   `;
 }
+// ========== FIM DA FUNÇÃO MODIFICADA ==========
 
 function updateQuantity(idx, change) {
   const item = cart[idx];
@@ -555,7 +598,7 @@ function removeFromCart(idx) {
   showNotification('Item removido', 'success');
 }
 
-// ========== FINALIZAR COMPRA (WhatsApp) ==========
+// ========== [TAXA] CHECKOUT modificado ==========
 async function checkout() {
   const name = document.getElementById('customer-name').value.trim();
   const phone = document.getElementById('customer-phone').value.trim();
@@ -570,13 +613,25 @@ async function checkout() {
     return showNotification('Preencha todos os campos obrigatórios!', 'error');
   }
   if (cart.length === 0) return showNotification('Carrinho vazio!', 'error');
+  
   const subtotal = cart.reduce((s, i) => s + toNumber(i.price) * i.quantity, 0);
-  const shipping = 0;
-  const discount = calculateDiscount(subtotal, shipping);
-  const total = Math.max(0, subtotal + shipping - discount);
+  const discount = calculateDiscount(subtotal, 0);
+  let total = subtotal - discount;
+  let feeAmount = 0;
+  let installments = 1;
+  
+  if (payment === 'Cartão de Crédito') {
+    const installmentSelect = document.getElementById('installments');
+    if (installmentSelect) installments = parseInt(installmentSelect.value);
+    const result = calculateTotalWithCardFee(subtotal, discount, installments);
+    total = result.total;
+    feeAmount = result.feeAmount;
+  }
+  
   const orderId = Date.now();
   sendWhatsAppMessage(name, phone, cart, total, orderId, discount, activeCoupon,
-    { cep, address, number, neighborhood, city, state }, payment);
+    { cep, address, number, neighborhood, city, state }, payment, feeAmount, installments);
+  
   cart = [];
   activeCoupon = null;
   updateCartUI();
@@ -593,11 +648,14 @@ async function checkout() {
   showNotification('✅ Pedido enviado! Você será redirecionado ao WhatsApp.', 'success');
 }
 
-function sendWhatsAppMessage(name, phone, items, total, orderId, discount, coupon, address, payment) {
-  let msg = `*🏋️‍♂️ PEDIDO SUPLEMAX - ${new Date().toLocaleDateString('pt-BR')}*\n\n`;
-  msg += `*Cliente:* ${name}\n*WhatsApp:* ${phone}\n*Nº Pedido:* ${orderId}\n`;
-  if (coupon) msg += `*Cupom:* ${coupon.code} (${coupon.description})\n`;
-  msg += `\n*📦 ITENS DO PEDIDO:*\n`;
+// ========== [TAXA] sendWhatsAppMessage modificado ==========
+function sendWhatsAppMessage(name, phone, items, total, orderId, discount, coupon, address, payment, feeAmount, installments) {
+  const lojaPhone = '5533998253024';
+
+  let msg = `*🏋️‍♂️ NOVO PEDIDO SUPLEMAX - ${new Date().toLocaleDateString('pt-BR')}*\n\n`;
+  msg += `*Cliente:* ${name}\n*WhatsApp Cliente:* ${phone}\n*Nº Pedido:* ${orderId}\n\n`;
+  if (coupon) msg += `*Cupom aplicado:* ${coupon.code} (${coupon.description})\n\n`;
+  msg += `*📦 ITENS DO PEDIDO:*\n`;
   items.forEach((item, i) => {
     const flavorText = item.flavor ? ` (Sabor: ${item.flavor.name})` : '';
     msg += `${i+1}. ${item.name}${flavorText}\n   Quantidade: ${item.quantity}\n   Preço unitário: R$ ${toNumber(item.price).toFixed(2)}\n   Subtotal: R$ ${(toNumber(item.price) * item.quantity).toFixed(2)}\n\n`;
@@ -605,12 +663,16 @@ function sendWhatsAppMessage(name, phone, items, total, orderId, discount, coupo
   const subtotal = items.reduce((s, i) => s + toNumber(i.price) * i.quantity, 0);
   msg += `*💰 RESUMO DO PEDIDO:*\nSubtotal: R$ ${subtotal.toFixed(2)}\nFrete: Grátis\n`;
   if (discount > 0) msg += `Desconto: R$ ${discount.toFixed(2)}\n`;
+  if (feeAmount > 0) msg += `*Juros cartão (${installments}x):* R$ ${feeAmount.toFixed(2)}\n`;
   msg += `*TOTAL DO PEDIDO: R$ ${total.toFixed(2)}*\n\n`;
   msg += `*📍 ENDEREÇO DE ENTREGA:*\n${address.address}, ${address.number}\n${address.neighborhood}\n${address.city} - ${address.state}\nCEP: ${address.cep}\n\n`;
-  msg += `*💳 FORMA DE PAGAMENTO:* ${payment}\n\n`;
-  msg += `Agradecemos pela preferência! 🎉\n*Equipe SUPLEMAX - Suplementos Premium*`;
-  window.open(`https://wa.me/55${phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+  msg += `*💳 FORMA DE PAGAMENTO:* ${payment} ${payment === 'Cartão de Crédito' ? `(${installments}x)` : ''}\n\n`;
+  msg += `✅ *Aguardando confirmação de pagamento para iniciar a produção/entrega.*\n\n`;
+  msg += `📱 *Contato do cliente:* ${phone}\n`;
+
+  window.open(`https://wa.me/${lojaPhone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
+// ========== FIM [TAXA] ==========
 
 // ========== NOTIFICAÇÕES ==========
 function showNotification(msg, type = 'success') {
@@ -624,6 +686,25 @@ function showLoading() { document.getElementById('loading').classList.add('activ
 function hideLoading() { document.getElementById('loading').classList.remove('active'); }
 function openCart() { renderCartItems(); document.getElementById('cart-overlay').classList.add('active'); document.getElementById('cart-sidebar').classList.add('active'); document.body.style.overflow = 'hidden'; }
 function closeCart() { document.getElementById('cart-overlay').classList.remove('active'); document.getElementById('cart-sidebar').classList.remove('active'); document.body.style.overflow = 'auto'; }
+
+// ========== CARROSSEL MOBILE ==========
+function initFlashSaleCarousel() {
+  if (window.innerWidth > 768) return;
+  const container = document.querySelector('.flash-sale-products');
+  if (!container || document.querySelector('.carousel-arrow')) return;
+  const section = document.querySelector('.flash-sale-section');
+  if (!section) return;
+  const leftArrow = document.createElement('div');
+  leftArrow.className = 'carousel-arrow left';
+  leftArrow.innerHTML = '<i class="fas fa-chevron-left"></i>';
+  const rightArrow = document.createElement('div');
+  rightArrow.className = 'carousel-arrow right';
+  rightArrow.innerHTML = '<i class="fas fa-chevron-right"></i>';
+  section.appendChild(leftArrow);
+  section.appendChild(rightArrow);
+  leftArrow.addEventListener('click', () => container.scrollBy({ left: -300, behavior: 'smooth' }));
+  rightArrow.addEventListener('click', () => container.scrollBy({ left: 300, behavior: 'smooth' }));
+}
 
 // ========== EVENTOS ==========
 function setupEvents() {
@@ -656,6 +737,24 @@ function setupEvents() {
   document.getElementById('newsletter-form').addEventListener('submit', e => { e.preventDefault(); showNotification('Inscrito com sucesso!', 'success'); e.target.reset(); });
   document.getElementById('coupon-input').addEventListener('keypress', e => { if (e.key === 'Enter') applyCoupon(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCart(); closeAbout(); closeProductModal(); } });
+  
+  // ========== [TAXA] Evento para mostrar/esconder seletor de parcelas ==========
+  document.querySelectorAll('input[name="payment"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      const installmentDiv = document.getElementById('installment-container');
+      if (installmentDiv) {
+        installmentDiv.style.display = this.value === 'Cartão de Crédito' ? 'block' : 'none';
+      }
+      updateCartUI();
+    });
+  });
+  // Forçar estado inicial
+  const selectedPayment = document.querySelector('input[name="payment"]:checked');
+  if (selectedPayment && selectedPayment.value === 'Cartão de Crédito') {
+    const div = document.getElementById('installment-container');
+    if (div) div.style.display = 'block';
+  }
+  // ========== FIM [TAXA] ==========
 }
 
 // ========== INICIALIZAÇÃO ==========
@@ -668,5 +767,14 @@ async function init() {
   startFlashSaleTimer();
   updateCartUI();
   hideLoading();
+  initFlashSaleCarousel();
+  
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      document.querySelectorAll('.carousel-arrow').forEach(el => el.remove());
+    } else {
+      if (!document.querySelector('.carousel-arrow')) initFlashSaleCarousel();
+    }
+  });
 }
 document.addEventListener('DOMContentLoaded', init);
