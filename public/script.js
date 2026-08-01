@@ -379,8 +379,7 @@ function startFlashSaleTimer() {
 }
 
 function loadFlashSaleProducts() {
-  const saleProducts = products.filter(p => p.on_sale === true && p.inventory > 0);
-  const featuredSales = saleProducts;
+  const featuredSales = products.filter(p => p.inventory > 0);
   const container = document.getElementById('flash-sale-products');
   if (!container) return;
   if (featuredSales.length === 0) {
@@ -392,9 +391,11 @@ function loadFlashSaleProducts() {
     return;
   }
   container.innerHTML = featuredSales.map(product => {
-    const isOnSale = product.on_sale && product.original_price > product.price;
-    const salePercentage = product.sale_percentage || Math.round((1 - toNumber(product.price) / toNumber(product.original_price)) * 100);
-    const savings = toNumber(product.original_price) - toNumber(product.price);
+    const hasOwnSale = product.on_sale && product.original_price > product.price;
+    const originalPrice = hasOwnSale ? toNumber(product.original_price) : toNumber(product.price);
+    const currentPrice = hasOwnSale ? toNumber(product.price) : toNumber(product.price) * 0.9;
+    const salePercentage = hasOwnSale ? (product.sale_percentage || Math.round((1 - currentPrice / originalPrice) * 100)) : 10;
+    const savings = originalPrice - currentPrice;
     const cat = categories.find(c => c.slug === product.collection);
     const catName = cat ? cat.name : (categoryNames[product.collection] || product.collection);
     const imgUrl = product.image_url || product.image_1 || 'https://picsum.photos/220/220?random=flash';
@@ -406,8 +407,8 @@ function loadFlashSaleProducts() {
           <span class="product-category">${catName}</span>
           <h3 class="product-title">${product.name}</h3>
           <div class="flash-sale-price">
-            ${isOnSale ? `<span class="original">R$ ${toNumber(product.original_price).toFixed(2)}</span>` : ''}
-            <span class="current">R$ ${toNumber(product.price).toFixed(2)}</span>
+            <span class="original">R$ ${originalPrice.toFixed(2)}</span>
+            <span class="current">R$ ${currentPrice.toFixed(2)}</span>
             <span class="discount-badge">-${salePercentage}%</span>
           </div>
           <div class="flash-sale-savings">
@@ -438,6 +439,17 @@ function applyCoupon() {
   input.disabled = true;
   updateCartUI();
   showNotification(`Cupom "${code}" aplicado!`, 'success');
+}
+
+function applyDefaultCoupon() {
+  const code = 'SUPLEMAX10';
+  const coupon = coupons[code];
+  if (!coupon) return;
+  activeCoupon = { code, discount: coupon.discount, type: coupon.type, description: coupon.description };
+  const input = document.getElementById('coupon-input');
+  const msg = document.getElementById('coupon-message');
+  if (input) { input.value = code; input.disabled = true; }
+  if (msg) msg.innerHTML = `<span style="color:var(--success);">✓ Cupom da promoção de 2 anos aplicado: ${coupon.description}</span>`;
 }
 
 function removeCoupon() {
@@ -757,6 +769,7 @@ async function init() {
   await loadCategories();
   await loadProducts();
   startFlashSaleTimer();
+  applyDefaultCoupon();
   updateCartUI();
   hideLoading();
   initFlashSaleCarousel();
