@@ -349,10 +349,9 @@ function filterProducts(categoryId) {
 
 // ========== FLASH SALE ==========
 function startFlashSaleTimer() {
-  const targetDate = new Date();
-  targetDate.setDate(targetDate.getDate() + 3);
-  targetDate.setHours(23, 59, 59, 999);
-  
+  // Promoção de 2 anos válida até o fim de agosto
+  const targetDate = new Date(new Date().getFullYear(), 7, 31, 23, 59, 59, 999);
+
   function updateTimer() {
     const now = new Date();
     const diff = targetDate - now;
