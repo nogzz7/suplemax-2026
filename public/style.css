@@ -507,7 +507,7 @@ input, select, textarea {
   width: 100%;
   height: 220px;
   object-fit: contain;
-  background: linear-gradient(135deg, #FFF5F5 0%, #FFEBEE 100%);
+  background: var(--white);
   transition: transform 0.3s;
   padding: var(--space-md);
 }
