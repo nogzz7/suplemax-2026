@@ -11,9 +11,6 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- Swiper CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-  
   <!-- Nosso CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
@@ -27,8 +24,8 @@
     <div class="container">
       <div class="header-top-content">
         <div class="discount-tag">
-          <i class="fas fa-bolt"></i>
-          ATÉ 50% OFF NA BLACK FRIDAY
+          <i class="fas fa-fire"></i>
+          PROMOÇÃO DE 2 ANOS: 10% OFF EM TODOS OS SUPLEMENTOS
         </div>
         <div class="header-top-right">
           <span>Frete grátis em todos os pedidos!</span>
@@ -58,11 +55,11 @@
         </div>
         
         <div class="header-actions">
-          <a href="#" class="header-action">
+          <a href="#" class="header-action" onclick="event.preventDefault(); showNotification('Área do cliente em breve! 🚀', 'success');">
             <div class="action-icon"><i class="far fa-user"></i></div>
             <span>Minha Conta</span>
           </a>
-          <a href="#" class="header-action">
+          <a href="#" class="header-action" onclick="event.preventDefault(); showNotification('Favoritos em breve! ❤️', 'success');">
             <div class="action-icon"><i class="far fa-heart"></i></div>
             <span>Favoritos</span>
           </a>
@@ -78,19 +75,11 @@
     </div>
   </header>
   
-  <!-- BANNER PRINCIPAL -->
-  <section class="banner-section">
+  <!-- BANNER PRINCIPAL - PROMOÇÃO DE 2 ANOS -->
+  <section class="banner-section banner-2anos">
     <div class="container">
-      <div class="swiper">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <img src="https://i.ibb.co/KcWsnpPM/garrafa.png" alt="Whey Protein SUPLEMAX" class="banner-image">
-          </div>
-          <div class="swiper-slide">
-            <img src="https://i.ibb.co/ksC318NP/banner2.png" alt="Creatina Monohidratada" class="banner-image">
-          </div>
-        </div>
-        <div class="swiper-pagination"></div>
+      <div class="banner-frame">
+        <img src="https://i.ibb.co/7d7JfRjx/2anosbanner.jpg" alt="Promoção de 2 Anos SUPLEMAX - 10% OFF em todos os suplementos" class="banner-image">
       </div>
     </div>
   </section>
@@ -101,12 +90,12 @@
       <div class="flash-sale-header">
         <div class="flash-sale-title-group">
           <div class="flash-sale-icon">
-            <i class="fas fa-bolt"></i>
+            <i class="fas fa-fire"></i>
           </div>
           <div class="flash-sale-text">
-            <span class="flash-sale-badge">LIMITED TIME</span>
-            <h2 class="flash-sale-title">OFERTAS <span>IMPERDÍVEIS</span></h2>
-            <p class="flash-sale-subtitle">Até 50% OFF em produtos selecionados</p>
+            <span class="flash-sale-badge">PROMOÇÃO DE 2 ANOS</span>
+            <h2 class="flash-sale-title">OFERTAS <span>DE ANIVERSÁRIO</span></h2>
+            <p class="flash-sale-subtitle">10% OFF em todos os suplementos, por tempo limitado</p>
           </div>
         </div>
         <div class="flash-sale-timer" id="flash-sale-timer">
@@ -135,7 +124,7 @@
       <div class="flash-sale-products" id="flash-sale-products"></div>
       
       <div class="flash-sale-footer">
-        <a href="#" class="btn-view-all" onclick="filterProducts('all', event)">Ver todas as ofertas <i class="fas fa-arrow-right"></i></a>
+        <a href="#products" class="btn-view-all" onclick="event.preventDefault(); filterProducts('all');">Ver todas as ofertas <i class="fas fa-arrow-right"></i></a>
       </div>
     </div>
   </section>
@@ -144,8 +133,8 @@
   <section class="mini-banners section-sm">
     <div class="container">
       <div class="mini-banners-grid">
-        <div class="mini-banner"><h3>ENTREGA RÁPIDA</h3><p>Enviamos para todo Brasil!</p><a class="banner-button">Saiba Mais</a></div>
-        <div class="mini-banner"><h3>PARCELE EM ATÉ 6X</h3><p>No cartão de crédito.</p><a class="banner-button">Ver Condições</a></div>
+        <div class="mini-banner"><h3>ENTREGA RÁPIDA</h3><p>Enviamos para todo Brasil!</p><a href="#" class="banner-button" onclick="event.preventDefault(); showNotification('Prazo de 3 a 10 dias úteis para todo o Brasil, com frete grátis!', 'success');">Saiba Mais</a></div>
+        <div class="mini-banner"><h3>PARCELE EM ATÉ 6X</h3><p>No cartão de crédito.</p><a href="#" class="banner-button" onclick="event.preventDefault(); showNotification('Parcelamento em até 6x no cartão de crédito, com juros informados no carrinho.', 'success');">Ver Condições</a></div>
         <div class="mini-banner"><h3>SOBRE A SUPLEMAX</h3><p>Conheça nossa história.</p><a href="javascript:void(0)" onclick="openAbout()" class="banner-button">Conheça</a></div>
       </div>
     </div>
@@ -156,7 +145,7 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">Categorias <span>SUPLEMAX</span></h2>
-        <a href="#" class="section-link">Ver todas <i class="fas fa-arrow-right"></i></a>
+        <a href="#products" class="section-link" onclick="filterProducts('all')">Ver todas <i class="fas fa-arrow-right"></i></a>
       </div>
       <div class="categories-grid" id="categories-grid"></div>
     </div>
@@ -212,17 +201,17 @@
       <div class="footer-content">
         <div class="footer-column">
           <div class="footer-logo">SUPLE<span>MAX</span></div>
-          <p class="footer-description">Há 2 anos no mercado, oferecendo os melhores suplementos.</p>
+          <p class="footer-description">Suplementos selecionados com qualidade e confiança para sua evolução.</p>
           <div class="social-links">
-            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="social-link" onclick="event.preventDefault(); showNotification('Instagram em breve! 📸', 'success');"><i class="fab fa-instagram"></i></a>
+            <a href="https://wa.me/5533998253024" target="_blank" rel="noopener" class="social-link"><i class="fab fa-whatsapp"></i></a>
           </div>
         </div>
         <div class="footer-column"><h3>Links Rápidos</h3><ul class="footer-links"><li><a href="#"><i class="fas fa-chevron-right"></i> Início</a></li><li><a href="#products"><i class="fas fa-chevron-right"></i> Produtos</a></li><li><a href="#categories"><i class="fas fa-chevron-right"></i> Categorias</a></li></ul></div>
-        <div class="footer-column"><h3>Categorias</h3><ul class="footer-links"><li><a href="#">Massa Muscular</a></li><li><a href="#">Emagrecimento</a></li><li><a href="#">Energia</a></li></ul></div>
-        <div class="footer-column"><h3>Contato</h3><ul class="contact-info"><li><i class="fas fa-phone"></i><span>(33) 99982-53024</span></li><li><i class="fas fa-envelope"></i><span>contato@suplemax.com.br</span></li><li><i class="fas fa-map-marker-alt"></i><span>Cruzinha - MG</span></li></ul></div>
+        <div class="footer-column"><h3>Categorias</h3><ul class="footer-links"><li><a href="#products" onclick="filterProducts('massa')">Massa Muscular</a></li><li><a href="#products" onclick="filterProducts('emagrecimento')">Emagrecimento</a></li><li><a href="#products" onclick="filterProducts('energia')">Energia</a></li></ul></div>
+        <div class="footer-column"><h3>Contato</h3><ul class="contact-info"><li><i class="fas fa-phone"></i><span>(33) 99825-3024</span></li><li><i class="fas fa-envelope"></i><span>contato@suplemax.com.br</span></li><li><i class="fas fa-map-marker-alt"></i><span>Cruzinha - MG</span></li></ul></div>
       </div>
-      <div class="copyright"><p>&copy; 2024 SUPLEMAX - Todos os direitos reservados.</p></div>
+      <div class="copyright"><p>&copy; <span id="copyright-year">2024</span> SUPLEMAX - Todos os direitos reservados.</p></div>
     </div>
   </footer>
   
@@ -333,7 +322,6 @@
   
   <div class="notification" id="notification"></div>
   
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

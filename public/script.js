@@ -230,16 +230,6 @@ function addToWishlistFromModal() {
   if (currentProduct) addToWishlist(currentProduct.id);
 }
 
-// ========== INICIALIZAR SWIPER ==========
-const swiper = new Swiper('.swiper', {
-  direction: 'horizontal',
-  loop: true,
-  autoplay: { delay: 5000, disableOnInteraction: false },
-  pagination: { el: '.swiper-pagination', clickable: true },
-  effect: 'fade',
-  fadeEffect: { crossFade: true }
-});
-
 // ========== MAPEAMENTO DE CATEGORIAS ==========
 const categoryNames = {
   'massa': 'Whey Protein',
@@ -760,6 +750,8 @@ function setupEvents() {
 // ========== INICIALIZAÇÃO ==========
 async function init() {
   console.log('🚀 Inicializando SUPLEMAX...');
+  const copyrightYearEl = document.getElementById('copyright-year');
+  if (copyrightYearEl) copyrightYearEl.textContent = new Date().getFullYear();
   setupEvents();
   showLoading();
   await loadCategories();
