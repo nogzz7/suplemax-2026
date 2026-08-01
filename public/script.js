@@ -380,7 +380,7 @@ function startFlashSaleTimer() {
 
 function loadFlashSaleProducts() {
   const saleProducts = products.filter(p => p.on_sale === true && p.inventory > 0);
-  const featuredSales = saleProducts.slice(0, 4);
+  const featuredSales = saleProducts;
   const container = document.getElementById('flash-sale-products');
   if (!container) return;
   if (featuredSales.length === 0) {
