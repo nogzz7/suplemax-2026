@@ -391,29 +391,29 @@ function loadFlashSaleProducts() {
   }
   container.innerHTML = featuredSales.map(product => {
     const hasOwnSale = product.on_sale && product.original_price > product.price;
-    const originalPrice = hasOwnSale ? toNumber(product.original_price) : toNumber(product.price);
-    const currentPrice = hasOwnSale ? toNumber(product.price) : toNumber(product.price) * 0.9;
-    const salePercentage = hasOwnSale ? (product.sale_percentage || Math.round((1 - currentPrice / originalPrice) * 100)) : 10;
+    const currentPrice = toNumber(product.price);
+    const originalPrice = hasOwnSale ? toNumber(product.original_price) : currentPrice;
+    const salePercentage = hasOwnSale ? (product.sale_percentage || Math.round((1 - currentPrice / originalPrice) * 100)) : 0;
     const savings = originalPrice - currentPrice;
     const cat = categories.find(c => c.slug === product.collection);
     const catName = cat ? cat.name : (categoryNames[product.collection] || product.collection);
     const imgUrl = product.image_url || product.image_1 || 'https://picsum.photos/220/220?random=flash';
     return `
       <div class="flash-sale-card" onclick="openProductModal(${product.id})">
-        <div class="sale-ribbon">-${salePercentage}%</div>
+        ${hasOwnSale ? `<div class="sale-ribbon">-${salePercentage}%</div>` : ''}
         <img src="${imgUrl}" alt="${product.name}" class="product-image" onerror="this.src='https://picsum.photos/220/220?random=flashError'">
         <div class="product-info">
           <span class="product-category">${catName}</span>
           <h3 class="product-title">${product.name}</h3>
           <div class="flash-sale-price">
-            <span class="original">R$ ${originalPrice.toFixed(2)}</span>
+            ${hasOwnSale ? `<span class="original">R$ ${originalPrice.toFixed(2)}</span>` : ''}
             <span class="current">R$ ${currentPrice.toFixed(2)}</span>
-            <span class="discount-badge">-${salePercentage}%</span>
+            ${hasOwnSale ? `<span class="discount-badge">-${salePercentage}%</span>` : ''}
           </div>
-          <div class="flash-sale-savings">
+          ${hasOwnSale ? `<div class="flash-sale-savings">
             <i class="fas fa-piggy-bank"></i>
             <span>Economize R$ ${savings.toFixed(2)}</span>
-          </div>
+          </div>` : ''}
           <button class="btn-flash-sale" onclick="event.stopPropagation(); addToCart(${product.id})">
             <i class="fas fa-shopping-cart"></i> COMPRAR AGORA
           </button>
@@ -438,17 +438,6 @@ function applyCoupon() {
   input.disabled = true;
   updateCartUI();
   showNotification(`Cupom "${code}" aplicado!`, 'success');
-}
-
-function applyDefaultCoupon() {
-  const code = 'SUPLEMAX10';
-  const coupon = coupons[code];
-  if (!coupon) return;
-  activeCoupon = { code, discount: coupon.discount, type: coupon.type, description: coupon.description };
-  const input = document.getElementById('coupon-input');
-  const msg = document.getElementById('coupon-message');
-  if (input) { input.value = code; input.disabled = true; }
-  if (msg) msg.innerHTML = `<span style="color:var(--success);">✓ Cupom da promoção de 2 anos aplicado: ${coupon.description}</span>`;
 }
 
 function removeCoupon() {
@@ -599,8 +588,8 @@ function removeFromCart(idx) {
   showNotification('Item removido', 'success');
 }
 
-// ========== [TAXA] CHECKOUT modificado ==========
-async function checkout() {
+// ========== DADOS DO FORMULÁRIO DE CHECKOUT (compartilhado) ==========
+function getCheckoutFormData() {
   const name = document.getElementById('customer-name').value.trim();
   const phone = document.getElementById('customer-phone').value.trim();
   const cep = document.getElementById('customer-cep').value.trim();
@@ -611,10 +600,35 @@ async function checkout() {
   const state = document.getElementById('customer-state').value.trim().toUpperCase();
   const payment = document.querySelector('input[name="payment"]:checked')?.value || 'Não informado';
   if (!name || !phone || !cep || !address || !number || !neighborhood || !city || !state) {
-    return showNotification('Preencha todos os campos obrigatórios!', 'error');
+    showNotification('Preencha todos os campos obrigatórios!', 'error');
+    return null;
   }
-  if (cart.length === 0) return showNotification('Carrinho vazio!', 'error');
-  
+  if (cart.length === 0) {
+    showNotification('Carrinho vazio!', 'error');
+    return null;
+  }
+  return { name, phone, payment, address: { cep, address, number, neighborhood, city, state } };
+}
+
+function clearCheckoutForm() {
+  document.getElementById('customer-name').value = '';
+  document.getElementById('customer-phone').value = '';
+  document.getElementById('customer-cep').value = '';
+  document.getElementById('customer-address').value = '';
+  document.getElementById('customer-number').value = '';
+  document.getElementById('customer-neighborhood').value = '';
+  document.getElementById('customer-city').value = '';
+  document.getElementById('customer-state').value = '';
+  const pix = document.querySelector('input[name="payment"][value="PIX"]');
+  if (pix) pix.checked = true;
+}
+
+// ========== [TAXA] CHECKOUT modificado ==========
+async function checkout() {
+  const formData = getCheckoutFormData();
+  if (!formData) return;
+  const { name, phone, payment, address: { cep, address, number, neighborhood, city, state } } = formData;
+
   const subtotal = cart.reduce((s, i) => s + toNumber(i.price) * i.quantity, 0);
   const discount = calculateDiscount(subtotal, 0);
   let total = subtotal - discount;
@@ -637,15 +651,7 @@ async function checkout() {
   activeCoupon = null;
   updateCartUI();
   closeCart();
-  document.getElementById('customer-name').value = '';
-  document.getElementById('customer-phone').value = '';
-  document.getElementById('customer-cep').value = '';
-  document.getElementById('customer-address').value = '';
-  document.getElementById('customer-number').value = '';
-  document.getElementById('customer-neighborhood').value = '';
-  document.getElementById('customer-city').value = '';
-  document.getElementById('customer-state').value = '';
-  document.querySelector('input[name="payment"][value="PIX"]').checked = true;
+  clearCheckoutForm();
   showNotification('✅ Pedido enviado! Você será redirecionado ao WhatsApp.', 'success');
 }
 
@@ -676,11 +682,13 @@ function sendWhatsAppMessage(name, phone, items, total, orderId, discount, coupo
 // ========== FIM [TAXA] ==========
 
 // ========== NOTIFICAÇÕES ==========
+let notificationTimeoutId = null;
 function showNotification(msg, type = 'success') {
   const notif = document.getElementById('notification');
   notif.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i><span>${msg}</span><button onclick="hideNotification()"><i class="fas fa-times"></i></button>`;
   notif.className = `notification ${type} active`;
-  setTimeout(hideNotification, 5000);
+  if (notificationTimeoutId) clearTimeout(notificationTimeoutId);
+  notificationTimeoutId = setTimeout(hideNotification, 5000);
 }
 function hideNotification() { document.getElementById('notification').classList.remove('active'); }
 function showLoading() { document.getElementById('loading').classList.add('active'); }
@@ -768,7 +776,6 @@ async function init() {
   await loadCategories();
   await loadProducts();
   startFlashSaleTimer();
-  applyDefaultCoupon();
   updateCartUI();
   hideLoading();
   initFlashSaleCarousel();
@@ -781,4 +788,5 @@ async function init() {
     }
   });
 }
+
 document.addEventListener('DOMContentLoaded', init);
