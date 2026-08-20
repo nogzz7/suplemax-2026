@@ -696,6 +696,69 @@ function hideLoading() { document.getElementById('loading').classList.remove('ac
 function openCart() { renderCartItems(); document.getElementById('cart-overlay').classList.add('active'); document.getElementById('cart-sidebar').classList.add('active'); document.body.style.overflow = 'hidden'; }
 function closeCart() { document.getElementById('cart-overlay').classList.remove('active'); document.getElementById('cart-sidebar').classList.remove('active'); document.body.style.overflow = 'auto'; }
 
+// ========== CARROSSEL DE BANNERS ==========
+function initBannerCarousel() {
+  const carousel = document.getElementById('banner-carousel');
+  const track = document.getElementById('banner-track');
+  const dotsContainer = document.getElementById('banner-dots');
+  const prevBtn = document.getElementById('banner-prev');
+  const nextBtn = document.getElementById('banner-next');
+  if (!carousel || !track || !dotsContainer) return;
+
+  const slides = Array.from(track.children);
+  if (slides.length <= 1) {
+    if (prevBtn) prevBtn.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
+    return;
+  }
+
+  let currentIndex = 0;
+  let autoplayTimer = null;
+
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'banner-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', `Ir para o banner ${i + 1}`);
+    dot.addEventListener('click', () => goToSlide(i));
+    dotsContainer.appendChild(dot);
+  });
+  const dots = Array.from(dotsContainer.children);
+
+  function goToSlide(index) {
+    currentIndex = (index + slides.length) % slides.length;
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
+  }
+
+  function nextSlide() { goToSlide(currentIndex + 1); }
+  function prevSlide() { goToSlide(currentIndex - 1); }
+
+  function startAutoplay() {
+    stopAutoplay();
+    autoplayTimer = setInterval(nextSlide, 5000);
+  }
+  function stopAutoplay() {
+    if (autoplayTimer) clearInterval(autoplayTimer);
+  }
+
+  if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); startAutoplay(); });
+  if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); startAutoplay(); });
+
+  carousel.addEventListener('mouseenter', stopAutoplay);
+  carousel.addEventListener('mouseleave', startAutoplay);
+
+  let touchStartX = 0;
+  carousel.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; stopAutoplay(); }, { passive: true });
+  carousel.addEventListener('touchend', e => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 40) { diff > 0 ? nextSlide() : prevSlide(); }
+    startAutoplay();
+  }, { passive: true });
+
+  startAutoplay();
+}
+
 // ========== CARROSSEL MOBILE ==========
 function initFlashSaleCarousel() {
   if (window.innerWidth > 768) return;
@@ -779,6 +842,7 @@ async function init() {
   updateCartUI();
   hideLoading();
   initFlashSaleCarousel();
+  initBannerCarousel();
   
   window.addEventListener('resize', () => {
     if (window.innerWidth > 768) {

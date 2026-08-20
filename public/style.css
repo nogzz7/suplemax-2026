@@ -321,6 +321,88 @@ input, select, textarea {
   display: block;
 }
 
+/* CARROSSEL DE BANNERS */
+.banner-carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+}
+
+.banner-track {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+
+.banner-slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+}
+
+.banner-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--white);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.2s ease;
+}
+
+.banner-nav:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.banner-nav-prev {
+  left: var(--space-md);
+}
+
+.banner-nav-next {
+  right: var(--space-md);
+}
+
+.banner-dots {
+  position: absolute;
+  bottom: var(--space-md);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--space-sm);
+  z-index: 2;
+}
+
+.banner-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--white);
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.banner-dot.active {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+@media (max-width: 768px) {
+  .banner-nav {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
 /* FLASH SALE */
 .flash-sale-section {
   padding: var(--space-2xl) 0;
