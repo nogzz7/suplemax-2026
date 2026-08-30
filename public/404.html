@@ -91,7 +91,7 @@
   </style>
 </head>
 <body>
-  <video class="video-bg" id="bgVideo" autoplay muted loop playsinline>
+  <video class="video-bg" id="bgVideo" autoplay muted playsinline>
     <source src="/images/404video.mp4" type="video/mp4">
   </video>
 
@@ -102,17 +102,5 @@
       <a href="https://wa.me/5533998253024" target="_blank" rel="noopener" class="btn-whats"><i class="fab fa-whatsapp"></i> Falar no WhatsApp</a>
     </div>
   </div>
-
-  <script>
-    // Reforço: alguns navegadores param no fim do vídeo mesmo com o atributo "loop".
-    const bgVideo = document.getElementById('bgVideo');
-    bgVideo.addEventListener('ended', () => {
-      bgVideo.currentTime = 0;
-      bgVideo.play().catch(() => {});
-    });
-    bgVideo.addEventListener('pause', () => {
-      if (!bgVideo.ended) bgVideo.play().catch(() => {});
-    });
-  </script>
 </body>
 </html>
