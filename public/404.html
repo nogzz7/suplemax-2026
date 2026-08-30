@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página não encontrada - SUPLEMAX</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" href="https://i.ibb.co/SwR5Qmp1/l2.png">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: #000;
+      overflow: hidden;
+    }
+    .video-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      text-align: center;
+      padding: 48px 24px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+      color: #F5C542;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 1px;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      border: 1px solid rgba(245,197,66,0.4);
+      margin-bottom: 20px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 14px 32px;
+      border-radius: 9999px;
+      box-shadow: 0 10px 25px rgba(211,47,47,0.4);
+      transition: transform 0.2s;
+    }
+    .btn-whats {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #25D366;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 14px 32px;
+      border-radius: 9999px;
+      box-shadow: 0 10px 25px rgba(37,211,102,0.4);
+      transition: transform 0.2s;
+    }
+    .btn-home:hover, .btn-whats:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="/images/404video.mp4" type="video/mp4">
+  </video>
+
+  <div class="content">
+    <span class="badge">404 · PÁGINA NÃO ENCONTRADA</span>
+    <div class="btn-row">
+      <a href="/" class="btn-home"><i class="fas fa-arrow-left"></i> Voltar para a loja</a>
+      <a href="https://wa.me/5533998253024" target="_blank" rel="noopener" class="btn-whats"><i class="fab fa-whatsapp"></i> Falar no WhatsApp</a>
+    </div>
+  </div>
+</body>
+</html>
