@@ -348,35 +348,6 @@ function filterProducts(categoryId) {
 }
 
 // ========== FLASH SALE ==========
-function startFlashSaleTimer() {
-  // Promoção de 2 anos válida até o fim de agosto
-  const targetDate = new Date(new Date().getFullYear(), 7, 31, 23, 59, 59, 999);
-
-  function updateTimer() {
-    const now = new Date();
-    const diff = targetDate - now;
-    if (diff <= 0) {
-      const timerDiv = document.getElementById('flash-sale-timer');
-      if (timerDiv) timerDiv.innerHTML = '<div class="timer-expired" style="color:white; font-weight:bold;">OFERTAS ENCERRADAS! 🎯</div>';
-      return;
-    }
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    const daysEl = document.getElementById('timer-days');
-    const hoursEl = document.getElementById('timer-hours');
-    const minutesEl = document.getElementById('timer-minutes');
-    const secondsEl = document.getElementById('timer-seconds');
-    if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
-    if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
-    if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
-    if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
-  }
-  updateTimer();
-  setInterval(updateTimer, 1000);
-}
-
 function loadFlashSaleProducts() {
   const featuredSales = products.filter(p => p.inventory > 0);
   const container = document.getElementById('flash-sale-products');
@@ -657,7 +628,7 @@ async function checkout() {
 
 // ========== [TAXA] sendWhatsAppMessage modificado ==========
 function sendWhatsAppMessage(name, phone, items, total, orderId, discount, coupon, address, payment, feeAmount, installments) {
-  const lojaPhone = '5533998253024';
+  const lojaPhone = '5533998608453';
 
   let msg = `*🏋️‍♂️ NOVO PEDIDO SUPLEMAX - ${new Date().toLocaleDateString('pt-BR')}*\n\n`;
   msg += `*Cliente:* ${name}\n*WhatsApp Cliente:* ${phone}\n*Nº Pedido:* ${orderId}\n\n`;
@@ -838,7 +809,6 @@ async function init() {
   showLoading();
   await loadCategories();
   await loadProducts();
-  startFlashSaleTimer();
   updateCartUI();
   hideLoading();
   initFlashSaleCarousel();
