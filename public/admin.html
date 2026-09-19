@@ -534,7 +534,7 @@
 </div>
 
 <!-- Modais -->
-<div id="product-modal" class="modal-overlay"><div class="modal"><form id="product-form" onsubmit="saveProduct(event)"><div class="modal-header" style="display:flex; justify-content:space-between;"><h2>Produto</h2><button type="button" class="close-btn" onclick="closeProductModal()">&times;</button></div><input type="hidden" id="product-id"><div class="form-grid"><div class="form-group"><label>Nome</label><input type="text" id="product-name" required></div><div class="form-group"><label>Categoria</label><select id="product-category" required></select></div><div class="form-group"><label>Preço Custo</label><input type="number" id="product-cost-price" step="0.01"></div><div class="form-group"><label>Preço Venda</label><input type="number" id="product-price" step="0.01" required></div><div class="form-group"><label>Preço Original</label><input type="number" id="product-original-price" step="0.01"></div><div class="form-group"><label>Estoque</label><input type="number" id="product-inventory" required></div><div class="form-group"><label>Marca</label><input type="text" id="product-brand"></div><div class="form-group"><label>Sabor</label><input type="text" id="product-flavor"></div><div class="form-group"><label>Peso/Volume</label><input type="text" id="product-weight"></div></div><div class="form-group"><label>Descrição</label><textarea id="product-description" rows="2"></textarea></div><div class="form-group"><label>Imagem 1 (URL)</label><input type="text" id="product-image-1"></div><div class="form-group"><label>Imagem 2 (URL)</label><input type="text" id="product-image-2"></div><div class="form-group"><label>Imagem 3 (URL)</label><input type="text" id="product-image-3"></div><div class="form-group"><label>Sabores adicionais</label><div id="flavors-list" class="flavors-list"></div><button type="button" class="btn btn-outline btn-small" onclick="addFlavorField()">+ Adicionar sabor</button></div><div class="checkbox-group"><label><input type="checkbox" id="product-on-sale"> Promoção</label><label><input type="checkbox" id="product-available" checked> Disponível</label></div><div class="form-actions"><button type="button" class="btn btn-outline" onclick="closeProductModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div></form></div></div>
+<div id="product-modal" class="modal-overlay"><div class="modal"><form id="product-form" onsubmit="saveProduct(event)"><div class="modal-header" style="display:flex; justify-content:space-between;"><h2>Produto</h2><button type="button" class="close-btn" onclick="closeProductModal()">&times;</button></div><input type="hidden" id="product-id"><div class="form-grid"><div class="form-group"><label>Tipo de Produto</label><select id="product-type" onchange="toggleProductTypeFields()"><option value="suplemento">Suplemento</option><option value="roupa">Roupa</option></select></div><div class="form-group"><label>Nome</label><input type="text" id="product-name" required></div><div class="form-group"><label>Categoria</label><select id="product-category" required></select></div><div class="form-group"><label>Preço Custo</label><input type="number" id="product-cost-price" step="0.01"></div><div class="form-group"><label>Preço Venda</label><input type="number" id="product-price" step="0.01" required></div><div class="form-group"><label>Preço Original</label><input type="number" id="product-original-price" step="0.01"></div><div class="form-group"><label>Estoque</label><input type="number" id="product-inventory" required></div><div class="form-group"><label>Marca</label><input type="text" id="product-brand"></div><div class="form-group"><label><span id="label-flavor">Sabor</span></label><input type="text" id="product-flavor"></div><div class="form-group"><label><span id="label-weight">Peso/Volume</span></label><input type="text" id="product-weight"></div></div><div class="form-group"><label>Descrição</label><textarea id="product-description" rows="2"></textarea></div><div class="form-group"><label>Imagem 1 (URL)</label><input type="text" id="product-image-1"></div><div class="form-group"><label>Imagem 2 (URL)</label><input type="text" id="product-image-2"></div><div class="form-group"><label>Imagem 3 (URL)</label><input type="text" id="product-image-3"></div><div class="form-group"><label><span id="label-flavors-list">Sabores adicionais</span></label><div id="flavors-list" class="flavors-list"></div><button type="button" class="btn btn-outline btn-small" id="btn-add-flavor" onclick="addFlavorField()">+ Adicionar sabor</button></div><div class="checkbox-group"><label><input type="checkbox" id="product-on-sale"> Promoção</label><label><input type="checkbox" id="product-available" checked> Disponível</label></div><div class="form-actions"><button type="button" class="btn btn-outline" onclick="closeProductModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div></form></div></div>
 
 <div id="category-modal" class="modal-overlay"><div class="modal"><form onsubmit="saveCategory(event)"><div style="display:flex; justify-content:space-between;"><h2>Categoria</h2><button type="button" class="close-btn" onclick="closeCategoryModal()">&times;</button></div><input type="hidden" id="category-id"><div class="form-group"><label>Nome</label><input type="text" id="category-name" required></div><div class="form-group"><label>Slug</label><input type="text" id="category-slug" required></div><div class="form-group"><label>Ícone (classe FA)</label><input type="text" id="category-icon"></div><div class="form-actions"><button type="button" class="btn btn-outline" onclick="closeCategoryModal()">Cancelar</button><button type="submit" class="btn btn-primary">Salvar</button></div></form></div></div>
 
@@ -591,7 +591,7 @@
       const cat = categories.find(c => c.slug === p.collection) || { name: p.collection };
       const img = p.image_1 || p.image_url || '';
       return `<tr>
-        <td><div class="product-cell"><img src="${img}" class="product-image" onerror="this.src='https://placehold.co/50x50?text=?'"><div><strong>${p.name}</strong><br><small>${p.metadata?.marca || ''}</small></div></div></td>
+        <td><div class="product-cell"><img src="${img}" class="product-image" onerror="this.src='https://placehold.co/50x50?text=?'"><div><strong>${p.name}</strong> ${p.metadata?.tipo === 'roupa' ? '<span class="badge badge-info">Roupa</span>' : ''}<br><small>${p.metadata?.marca || ''}</small></div></div></td>
         <td>${cat.name || p.collection}</td>
         <td>R$ ${toNumber(p.cost_price).toFixed(2)}</td>
         <td>R$ ${toNumber(p.price).toFixed(2)}</td>
@@ -618,7 +618,7 @@
       image_3: document.getElementById('product-image-3').value,
       on_sale: document.getElementById('product-on-sale').checked,
       available: document.getElementById('product-available').checked,
-      metadata: { marca: document.getElementById('product-brand').value, sabor: document.getElementById('product-flavor').value, peso: document.getElementById('product-weight').value, flavors }
+      metadata: { tipo: document.getElementById('product-type').value, marca: document.getElementById('product-brand').value, sabor: document.getElementById('product-flavor').value, peso: document.getElementById('product-weight').value, flavors }
     };
     const id = document.getElementById('product-id').value;
     try {
@@ -673,6 +673,7 @@
     document.getElementById('flavors-list').innerHTML = '';
     if (product) {
       document.getElementById('product-id').value = product.id;
+      document.getElementById('product-type').value = product.metadata?.tipo || 'suplemento';
       document.getElementById('product-name').value = product.name;
       document.getElementById('product-description').value = product.description || '';
       document.getElementById('product-cost-price').value = product.cost_price || '';
@@ -688,22 +689,35 @@
       document.getElementById('product-image-3').value = product.image_3 || '';
       document.getElementById('product-on-sale').checked = product.on_sale || false;
       document.getElementById('product-available').checked = product.available !== false;
+      toggleProductTypeFields();
       if (product.metadata?.flavors) product.metadata.flavors.forEach(f => addFlavorField(f.name, f.image));
     } else {
       document.getElementById('product-form').reset();
       document.getElementById('product-id').value = '';
+      document.getElementById('product-type').value = 'suplemento';
       document.getElementById('product-available').checked = true;
+      toggleProductTypeFields();
       addFlavorField('', '');
     }
   }
   function closeProductModal() { document.getElementById('product-modal').classList.remove('active'); }
   function addFlavorField(flavorName = '', flavorImage = '') {
+    const isRoupa = document.getElementById('product-type')?.value === 'roupa';
     const div = document.createElement('div');
     div.className = 'flavor-item';
-    div.innerHTML = `<input type="text" class="flavor-name" placeholder="Nome" value="${escapeHtml(flavorName)}"><input type="text" class="flavor-image" placeholder="URL imagem" value="${escapeHtml(flavorImage)}"><button type="button" class="btn btn-danger btn-small" onclick="this.parentElement.remove()">X</button>`;
+    div.innerHTML = `<input type="text" class="flavor-name" placeholder="${isRoupa ? 'Tamanho (ex: P, M, G, GG)' : 'Nome do sabor'}" value="${escapeHtml(flavorName)}"><input type="text" class="flavor-image" placeholder="URL imagem" value="${escapeHtml(flavorImage)}"><button type="button" class="btn btn-danger btn-small" onclick="this.parentElement.remove()">X</button>`;
     document.getElementById('flavors-list').appendChild(div);
   }
   function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[m])); }
+  function toggleProductTypeFields() {
+    const isRoupa = document.getElementById('product-type').value === 'roupa';
+    document.getElementById('label-flavor').textContent = isRoupa ? 'Tamanho principal' : 'Sabor';
+    document.getElementById('product-flavor').placeholder = isRoupa ? 'Ex: M' : '';
+    document.getElementById('label-weight').textContent = isRoupa ? 'Cor' : 'Peso/Volume';
+    document.getElementById('label-flavors-list').textContent = isRoupa ? 'Tamanhos adicionais' : 'Sabores adicionais';
+    document.getElementById('btn-add-flavor').textContent = isRoupa ? '+ Adicionar tamanho' : '+ Adicionar sabor';
+    document.querySelectorAll('#flavors-list .flavor-name').forEach(inp => inp.placeholder = isRoupa ? 'Tamanho (ex: P, M, G, GG)' : 'Nome do sabor');
+  }
 
   // ========== CATEGORIAS ==========
   async function loadCategories() {
