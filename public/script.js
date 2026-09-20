@@ -118,22 +118,36 @@ function openProductModal(productId) {
   document.getElementById('modal-thumbnails').innerHTML = thumbnailsHtml;
   
   // Informações adicionais
+  const isRoupa = product.metadata?.tipo === 'roupa';
   const detailsContainer = document.getElementById('product-details-under-gallery');
   if (detailsContainer) {
     const marca = product.metadata?.marca || 'SUPLEMAX';
-    const peso = product.metadata?.peso || '900g';
-    detailsContainer.innerHTML = `
-      <span><i class="fas fa-tag"></i> <strong>Marca:</strong> ${marca}</span>
-      <span><i class="fas fa-weight-hanging"></i> <strong>Peso:</strong> ${peso}</span>
-      <span><i class="fas fa-calendar-alt"></i> <strong>Validade:</strong> 24 meses</span>
-      <span><i class="fas fa-check-circle"></i> <strong>Certificação:</strong> ANVISA</span>
-    `;
+    if (isRoupa) {
+      const cor = product.metadata?.peso || '-';
+      detailsContainer.innerHTML = `
+        <span><i class="fas fa-tag"></i> <strong>Marca:</strong> ${marca}</span>
+        <span><i class="fas fa-palette"></i> <strong>Cor:</strong> ${cor}</span>
+        <span><i class="fas fa-tshirt"></i> <strong>Tipo:</strong> Vestuário</span>
+      `;
+    } else {
+      const peso = product.metadata?.peso || '900g';
+      detailsContainer.innerHTML = `
+        <span><i class="fas fa-tag"></i> <strong>Marca:</strong> ${marca}</span>
+        <span><i class="fas fa-weight-hanging"></i> <strong>Peso:</strong> ${peso}</span>
+        <span><i class="fas fa-calendar-alt"></i> <strong>Validade:</strong> 24 meses</span>
+        <span><i class="fas fa-check-circle"></i> <strong>Certificação:</strong> ANVISA</span>
+      `;
+    }
   }
-  
-  // Sabores
+
+  // Sabores / Tamanhos
   const flavorsContainer = document.getElementById('product-flavors-container');
   flavorsContainer.innerHTML = '';
   if (product.metadata?.flavors && product.metadata.flavors.length > 0) {
+    const label = document.createElement('div');
+    label.style.cssText = 'font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;';
+    label.textContent = isRoupa ? 'Escolha o tamanho:' : 'Escolha o sabor:';
+    flavorsContainer.appendChild(label);
     const flavorsDiv = document.createElement('div');
     flavorsDiv.style.display = 'flex';
     flavorsDiv.style.gap = '0.8rem';
@@ -160,7 +174,13 @@ function openProductModal(productId) {
   }
   
   // Aba informações
-  const infoContent = `
+  const infoContent = isRoupa ? `
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      <li><strong>Marca:</strong> ${product.metadata?.marca || 'SUPLEMAX'}</li>
+      <li><strong>Cor:</strong> ${product.metadata?.peso || '-'}</li>
+      <li><strong>Tamanhos disponíveis:</strong> ${(product.metadata?.flavors || []).map(f => f.name).join(', ') || '-'}</li>
+    </ul>
+  ` : `
     <ul style="list-style: none; padding: 0; margin: 0;">
       <li><strong>Marca:</strong> ${product.metadata?.marca || 'SUPLEMAX'}</li>
       <li><strong>Peso:</strong> ${product.metadata?.peso || '900g'}</li>
@@ -204,7 +224,13 @@ function switchTab(tab) {
                <div><strong>⭐⭐⭐⭐</strong> Maria Oliveira: "Muito bom, entrega rápida."</div>
                <div><strong>⭐⭐⭐⭐⭐</strong> Carlos Souza: "Qualidade top, comprarei novamente."</div>`;
   } else if (tab === 'info') {
-    content = `
+    content = currentProduct.metadata?.tipo === 'roupa' ? `
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li><strong>Marca:</strong> ${currentProduct.metadata?.marca || 'SUPLEMAX'}</li>
+        <li><strong>Cor:</strong> ${currentProduct.metadata?.peso || '-'}</li>
+        <li><strong>Tamanhos disponíveis:</strong> ${(currentProduct.metadata?.flavors || []).map(f => f.name).join(', ') || '-'}</li>
+      </ul>
+    ` : `
       <ul style="list-style: none; padding: 0; margin: 0;">
         <li><strong>Marca:</strong> ${currentProduct.metadata?.marca || 'SUPLEMAX'}</li>
         <li><strong>Peso:</strong> ${currentProduct.metadata?.peso || '900g'}</li>
@@ -235,7 +261,8 @@ const categoryNames = {
   'massa': 'Whey Protein',
   'emagrecimento': 'Creatina',
   'energia': 'Pré-treino',
-  'saude': 'Vitaminas'
+  'saude': 'Vitaminas',
+  'roupas': 'Roupas'
 };
 
 // ========== CARREGAR DADOS ==========
@@ -262,6 +289,7 @@ async function loadProducts() {
     });
     renderProducts();
     renderCategories();
+    renderClothingSection();
     loadFlashSaleProducts();
   } catch (error) {
     console.error('Erro ao carregar produtos:', error);
@@ -269,11 +297,49 @@ async function loadProducts() {
   }
 }
 
+function buildProductCard(product) {
+  const isOnSale = product.on_sale && product.original_price > product.price;
+  const isOutOfStock = product.inventory <= 0;
+  const isNew = new Date(product.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const salePercentage = product.sale_percentage || Math.round((1 - toNumber(product.price) / toNumber(product.original_price)) * 100);
+  const cat = categories.find(c => c.slug === product.collection);
+  const catName = cat ? cat.name : (categoryNames[product.collection] || product.collection);
+  const imgUrl = product.image_url || product.image_1 || 'https://picsum.photos/220/220?random=prod';
+  const overlayHtml = isOutOfStock ? `<div class="out-of-stock-label">ESGOTADO</div>` : '';
+
+  return `<div class="product-card">
+    <div class="product-badges">
+      ${isOnSale ? `<div class="badge badge-sale">${salePercentage}% OFF</div>` : ''}
+      ${isNew ? `<div class="badge badge-new">Novo</div>` : ''}
+      ${product.best_seller ? `<div class="badge badge-best">Mais Vendido</div>` : ''}
+    </div>
+    ${overlayHtml}
+    <img src="${imgUrl}" alt="${product.name}" class="product-image" onclick="openProductModal(${product.id})" style="cursor:pointer;" onerror="this.src='https://picsum.photos/220/220?random=error'">
+    <div class="product-info">
+      <span class="product-category" onclick="openProductModal(${product.id})" style="cursor:pointer;">${catName}</span>
+      <h3 class="product-title" onclick="openProductModal(${product.id})" style="cursor:pointer;">${product.name}</h3>
+      <div class="product-rating" onclick="openProductModal(${product.id})" style="cursor:pointer;">
+        <div class="stars">${'<i class="fas fa-star"></i>'.repeat(Math.floor(product.rating || 4))}</div>
+        <span class="rating-count">(${product.rating || 4})</span>
+      </div>
+      <div class="stock-status" onclick="openProductModal(${product.id})" style="cursor:pointer;">
+        ${isOutOfStock ? '<i class="fas fa-times-circle out-of-stock"></i> <span class="out-of-stock">Esgotado</span>' : '<i class="fas fa-check-circle in-stock"></i> <span class="in-stock">Em estoque</span>'}
+      </div>
+      <div class="product-price" onclick="openProductModal(${product.id})" style="cursor:pointer;">
+        ${isOnSale ? `<span class="original-price">R$ ${toNumber(product.original_price).toFixed(2)}</span>` : ''}
+        <span class="current-price">R$ ${toNumber(product.price).toFixed(2)}</span>
+      </div>
+      <p class="installment" onclick="openProductModal(${product.id})" style="cursor:pointer;">em até <strong>6x de R$ ${(toNumber(product.price) / 6).toFixed(2)}</strong> sem juros</p>
+      ${!isOutOfStock ? `<button class="btn-buy" onclick="event.stopPropagation(); addToCart(${product.id})"><i class="fas fa-shopping-cart"></i> COMPRAR</button>` : ''}
+    </div>
+  </div>`;
+}
+
 function renderProducts() {
   const container = document.getElementById('products-grid');
   let filtered = products;
   if (currentFilter !== 'all') filtered = products.filter(p => p.collection === currentFilter);
-  
+
   if (filtered.length === 0) {
     container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;">
       <i class="fas fa-box-open" style="font-size:64px; color:var(--gray-300);"></i>
@@ -281,44 +347,21 @@ function renderProducts() {
     </div>`;
     return;
   }
-  
-  container.innerHTML = filtered.map(product => {
-    const isOnSale = product.on_sale && product.original_price > product.price;
-    const isOutOfStock = product.inventory <= 0;
-    const isNew = new Date(product.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const salePercentage = product.sale_percentage || Math.round((1 - toNumber(product.price) / toNumber(product.original_price)) * 100);
-    const cat = categories.find(c => c.slug === product.collection);
-    const catName = cat ? cat.name : (categoryNames[product.collection] || product.collection);
-    const imgUrl = product.image_url || product.image_1 || 'https://picsum.photos/220/220?random=prod';
-    const overlayHtml = isOutOfStock ? `<div class="out-of-stock-label">ESGOTADO</div>` : '';
-    
-    return `<div class="product-card">
-      <div class="product-badges">
-        ${isOnSale ? `<div class="badge badge-sale">${salePercentage}% OFF</div>` : ''}
-        ${isNew ? `<div class="badge badge-new">Novo</div>` : ''}
-        ${product.best_seller ? `<div class="badge badge-best">Mais Vendido</div>` : ''}
-      </div>
-      ${overlayHtml}
-      <img src="${imgUrl}" alt="${product.name}" class="product-image" onclick="openProductModal(${product.id})" style="cursor:pointer;" onerror="this.src='https://picsum.photos/220/220?random=error'">
-      <div class="product-info">
-        <span class="product-category" onclick="openProductModal(${product.id})" style="cursor:pointer;">${catName}</span>
-        <h3 class="product-title" onclick="openProductModal(${product.id})" style="cursor:pointer;">${product.name}</h3>
-        <div class="product-rating" onclick="openProductModal(${product.id})" style="cursor:pointer;">
-          <div class="stars">${'<i class="fas fa-star"></i>'.repeat(Math.floor(product.rating || 4))}</div>
-          <span class="rating-count">(${product.rating || 4})</span>
-        </div>
-        <div class="stock-status" onclick="openProductModal(${product.id})" style="cursor:pointer;">
-          ${isOutOfStock ? '<i class="fas fa-times-circle out-of-stock"></i> <span class="out-of-stock">Esgotado</span>' : '<i class="fas fa-check-circle in-stock"></i> <span class="in-stock">Em estoque</span>'}
-        </div>
-        <div class="product-price" onclick="openProductModal(${product.id})" style="cursor:pointer;">
-          ${isOnSale ? `<span class="original-price">R$ ${toNumber(product.original_price).toFixed(2)}</span>` : ''}
-          <span class="current-price">R$ ${toNumber(product.price).toFixed(2)}</span>
-        </div>
-        <p class="installment" onclick="openProductModal(${product.id})" style="cursor:pointer;">em até <strong>6x de R$ ${(toNumber(product.price) / 6).toFixed(2)}</strong> sem juros</p>
-        ${!isOutOfStock ? `<button class="btn-buy" onclick="event.stopPropagation(); addToCart(${product.id})"><i class="fas fa-shopping-cart"></i> COMPRAR</button>` : ''}
-      </div>
-    </div>`;
-  }).join('');
+
+  container.innerHTML = filtered.map(buildProductCard).join('');
+}
+
+function renderClothingSection() {
+  const section = document.getElementById('roupas-section');
+  const container = document.getElementById('clothing-products-grid');
+  if (!section || !container) return;
+  const clothing = products.filter(p => p.metadata?.tipo === 'roupa');
+  if (clothing.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = '';
+  container.innerHTML = clothing.map(buildProductCard).join('');
 }
 
 function renderCategories() {
@@ -438,6 +481,7 @@ function addToCart(productId, flavor = null) {
   const product = products.find(p => p.id == productId);
   if (!product) return showNotification('Produto não encontrado', 'error');
   if (product.inventory <= 0) return showNotification('Produto esgotado!', 'error');
+  const variantLabel = product.metadata?.tipo === 'roupa' ? 'Tamanho' : 'Sabor';
   let displayName = product.name;
   if (flavor && flavor.name) {
     displayName = `${product.name} - ${flavor.name}`;
@@ -460,7 +504,7 @@ function addToCart(productId, flavor = null) {
       price: product.price,
       image: product.image_url || product.image_1 || 'https://picsum.photos/80/80?random=cart',
       quantity: 1,
-      flavor: flavor ? { name: flavor.name, image: flavor.image } : null
+      flavor: flavor ? { name: flavor.name, image: flavor.image, label: variantLabel } : null
     });
   }
   updateCartUI();
@@ -635,7 +679,7 @@ function sendWhatsAppMessage(name, phone, items, total, orderId, discount, coupo
   if (coupon) msg += `*Cupom aplicado:* ${coupon.code} (${coupon.description})\n\n`;
   msg += `*📦 ITENS DO PEDIDO:*\n`;
   items.forEach((item, i) => {
-    const flavorText = item.flavor ? ` (Sabor: ${item.flavor.name})` : '';
+    const flavorText = item.flavor ? ` (${item.flavor.label || 'Sabor'}: ${item.flavor.name})` : '';
     msg += `${i+1}. ${item.name}${flavorText}\n   Quantidade: ${item.quantity}\n   Preço unitário: R$ ${toNumber(item.price).toFixed(2)}\n   Subtotal: R$ ${(toNumber(item.price) * item.quantity).toFixed(2)}\n\n`;
   });
   const subtotal = items.reduce((s, i) => s + toNumber(i.price) * i.quantity, 0);
