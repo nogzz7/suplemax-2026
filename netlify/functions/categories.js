@@ -1,9 +1,10 @@
 const db = require('./db');
+const { isAuthorized } = require('./auth');
 
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, x-admin-key',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   };
 
@@ -26,6 +27,10 @@ exports.handler = async (event) => {
         const result = await db.query('SELECT * FROM categories ORDER BY name');
         return { statusCode: 200, headers, body: JSON.stringify(result.rows) };
       }
+    }
+
+    if (!isAuthorized(event)) {
+      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Não autorizado' }) };
     }
 
     // POST – criar nova categoria

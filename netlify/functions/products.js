@@ -1,9 +1,10 @@
 const db = require('./db');
+const { isAuthorized } = require('./auth');
 
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, x-admin-key',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   };
 
@@ -11,17 +12,23 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers, body: '' };
   }
 
+  const authorized = isAuthorized(event);
+
   try {
     if (event.httpMethod === 'GET') {
       const result = await db.query('SELECT * FROM products ORDER BY created_at DESC');
       const products = result.rows.map(row => ({
         ...row,
         price: parseFloat(row.price),
-        cost_price: row.cost_price ? parseFloat(row.cost_price) : 0,
+        cost_price: authorized && row.cost_price ? parseFloat(row.cost_price) : 0,
         original_price: row.original_price ? parseFloat(row.original_price) : null,
         inventory: parseInt(row.inventory),
       }));
       return { statusCode: 200, headers, body: JSON.stringify(products) };
+    }
+
+    if (!authorized) {
+      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Não autorizado' }) };
     }
 
     if (event.httpMethod === 'POST') {
