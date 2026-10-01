@@ -556,7 +556,6 @@
 
 <script>
   const API_BASE = '/.netlify/functions';
-  const ADMIN_PASSWORD = 'suplemax2024';
   let products = [], orders = [], categories = [], coupons = [], customers = [];
   let filteredProducts = [], filteredOrders = [];
 
@@ -569,10 +568,12 @@
     n.className = 'notification active';
     setTimeout(() => n.classList.remove('active'), 3000);
   }
+  function getAdminKey() { return sessionStorage.getItem('suplemax-admin-key') || ''; }
   async function api(method, endpoint, data = null, id = null) {
     let url = `${API_BASE}/${endpoint}`;
     if (id) url += `?id=${id}`;
-    const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: data ? JSON.stringify(data) : undefined });
+    const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'x-admin-key': getAdminKey() }, body: data ? JSON.stringify(data) : undefined });
+    if (res.status === 401) { logout(); throw new Error('Sessão expirada, faça login novamente'); }
     if (!res.ok) throw new Error(await res.text());
     return res.json();
   }
@@ -1208,17 +1209,24 @@
   }
 
   // ========== LOGIN ==========
-  function checkPassword() {
+  async function checkPassword() {
     const pwd = document.getElementById('admin-password').value;
-    if (pwd === ADMIN_PASSWORD) {
+    document.getElementById('login-error').innerText = '';
+    sessionStorage.setItem('suplemax-admin-key', pwd);
+    try {
+      const res = await fetch(`${API_BASE}/coupons`, { headers: { 'x-admin-key': pwd } });
+      if (res.status === 401) throw new Error('Senha incorreta');
+      if (!res.ok) throw new Error('Não foi possível validar a senha agora');
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('admin-panel').style.display = 'block';
       initAdmin();
-    } else {
-      document.getElementById('login-error').innerText = 'Senha incorreta';
+    } catch (err) {
+      sessionStorage.removeItem('suplemax-admin-key');
+      document.getElementById('login-error').innerText = err.message;
     }
   }
   function logout() {
+    sessionStorage.removeItem('suplemax-admin-key');
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('admin-panel').style.display = 'none';
   }

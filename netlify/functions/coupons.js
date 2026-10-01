@@ -1,14 +1,19 @@
 const db = require('./db');
+const { isAuthorized } = require('./auth');
 
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, x-admin-key',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
   };
 
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers, body: '' };
+  }
+
+  if (!isAuthorized(event)) {
+    return { statusCode: 401, headers, body: JSON.stringify({ error: 'Não autorizado' }) };
   }
 
   try {
