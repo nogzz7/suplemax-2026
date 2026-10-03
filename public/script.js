@@ -364,6 +364,48 @@ function renderClothingSection() {
   container.innerHTML = clothing.map(buildProductCard).join('');
 }
 
+// ========== SUGESTÕES DE BUSCA (autocomplete) ==========
+function renderSearchSuggestions(term) {
+  const box = document.getElementById('search-suggestions');
+  if (!box) return;
+  if (!term) {
+    box.classList.remove('active');
+    box.innerHTML = '';
+    return;
+  }
+  const matches = products
+    .filter(p => p.name.toLowerCase().includes(term) || (p.description || '').toLowerCase().includes(term))
+    .slice(0, 6);
+
+  if (!matches.length) {
+    box.innerHTML = `<div class="search-suggestion-empty">Nenhum produto encontrado</div>`;
+  } else {
+    box.innerHTML = matches.map(product => {
+      const imgUrl = product.image_url || product.image_1 || 'https://picsum.photos/80/80?random=suggestion';
+      return `<div class="search-suggestion-item" onclick="selectSearchSuggestion(${product.id})">
+        <img src="${imgUrl}" class="search-suggestion-image" onerror="this.src='https://picsum.photos/80/80?random=suggestionError'">
+        <div class="search-suggestion-info">
+          <div class="search-suggestion-name">${product.name}</div>
+          <div class="search-suggestion-price">R$ ${toNumber(product.price).toFixed(2)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  box.classList.add('active');
+}
+
+function selectSearchSuggestion(productId) {
+  hideSearchSuggestions();
+  document.getElementById('search-input').value = '';
+  renderProducts();
+  openProductModal(productId);
+}
+
+function hideSearchSuggestions() {
+  const box = document.getElementById('search-suggestions');
+  if (box) { box.classList.remove('active'); box.innerHTML = ''; }
+}
+
 function renderCategories() {
   const container = document.getElementById('categories-grid');
   const catsToShow = categories.length ? categories : [
@@ -800,6 +842,7 @@ function setupEvents() {
   document.getElementById('checkout-btn').addEventListener('click', checkout);
   document.getElementById('search-input').addEventListener('input', e => {
     const term = e.target.value.toLowerCase();
+    renderSearchSuggestions(term);
     if (!term) return renderProducts();
     const filtered = products.filter(p => p.name.toLowerCase().includes(term) || (p.description || '').toLowerCase().includes(term));
     const container = document.getElementById('products-grid');
@@ -823,7 +866,10 @@ function setupEvents() {
   });
   document.getElementById('newsletter-form').addEventListener('submit', e => { e.preventDefault(); showNotification('Inscrito com sucesso!', 'success'); e.target.reset(); });
   document.getElementById('coupon-input').addEventListener('keypress', e => { if (e.key === 'Enter') applyCoupon(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCart(); closeAbout(); closeProductModal(); } });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCart(); closeAbout(); closeProductModal(); hideSearchSuggestions(); } });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-container')) hideSearchSuggestions();
+  });
   
   // ========== [TAXA] Evento para mostrar/esconder seletor de parcelas ==========
   document.querySelectorAll('input[name="payment"]').forEach(radio => {
