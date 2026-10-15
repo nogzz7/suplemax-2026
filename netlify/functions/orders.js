@@ -44,6 +44,22 @@ exports.handler = async (event) => {
       );
       const newOrder = result.rows[0];
       newOrder.total_amount = parseFloat(newOrder.total_amount);
+
+      // Baixa de estoque best-effort: uma falha aqui nunca deve impedir o pedido de ser salvo
+      if (Array.isArray(items)) {
+        for (const item of items) {
+          if (!item || !item.id || !item.quantity) continue;
+          try {
+            await db.query(
+              'UPDATE products SET inventory = GREATEST(inventory - $1, 0) WHERE id = $2',
+              [item.quantity, item.id]
+            );
+          } catch (stockError) {
+            console.error('Falha ao debitar estoque do produto', item.id, stockError);
+          }
+        }
+      }
+
       return {
         statusCode: 201,
         headers,

@@ -701,6 +701,23 @@ async function checkout() {
   }
   
   const orderId = Date.now();
+
+  try {
+    await fetch(`${API_BASE}/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customer_name: name,
+        customer_phone: phone,
+        items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+        total_amount: total,
+        status: 'pending',
+      }),
+    });
+  } catch (err) {
+    console.error('Não foi possível salvar o pedido no painel (o pedido pelo WhatsApp segue normalmente):', err);
+  }
+
   sendWhatsAppMessage(name, phone, cart, total, orderId, discount, activeCoupon,
     { cep, address, number, neighborhood, city, state }, payment, feeAmount, installments);
   
