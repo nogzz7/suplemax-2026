@@ -407,6 +407,15 @@ input, select, textarea {
   display: block;
 }
 
+.roupas-banner {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-xl);
+  box-shadow: var(--shadow-lg);
+}
+
 /* CARROSSEL DE BANNERS */
 .banner-carousel {
   position: relative;
