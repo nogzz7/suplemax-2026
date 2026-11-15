@@ -616,7 +616,6 @@ function renderCartItems() {
   
   summary.innerHTML = `
     <div class="summary-row"><span>Subtotal:</span><span>R$ ${subtotal.toFixed(2)}</span></div>
-    <div class="summary-row"><span>Frete:</span><span>A combinar no WhatsApp</span></div>
     ${discount > 0 ? `<div class="summary-row discount-row"><span>Desconto (${activeCoupon?.code || ''}):</span><span>- R$ ${discount.toFixed(2)}</span></div>` : ''}
     ${feeAmount > 0 ? `<div class="summary-row"><span>Juros cartão (${installments}x):</span><span>R$ ${feeAmount.toFixed(2)}</span></div>` : ''}
     ${activeCoupon ? `<div class="summary-row discount-row"><span>Cupom ${activeCoupon.code}:</span><span>- R$ ${discount.toFixed(2)}</span><button onclick="removeCoupon()" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-times"></i></button></div>` : ''}
