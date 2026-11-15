@@ -39,7 +39,6 @@ const coupons = {
   'BLACKFRIDAY2024': { discount: 20, type: 'percentage', description: '20% OFF na Black Friday' },
   'PRIMEIRACOMPRA': { discount: 15, type: 'percentage', description: '15% OFF na primeira compra' },
   'SUPLEMAX10': { discount: 10, type: 'percentage', description: '10% OFF em qualquer compra' },
-  'FRETEGRATIS': { discount: 100, type: 'fixed', description: 'Frete grátis (R$ 100)' },
   'SUPER50': { discount: 50, type: 'fixed', description: 'R$ 50 de desconto' }
 };
 
@@ -512,8 +511,7 @@ function calculateDiscount(subtotal, shipping) {
   let discount = 0;
   if (activeCoupon.type === 'percentage') discount = subtotal * (activeCoupon.discount / 100);
   else if (activeCoupon.type === 'fixed') {
-    if (activeCoupon.description.includes('Frete grátis')) discount = shipping;
-    else discount = Math.min(activeCoupon.discount, subtotal);
+    discount = Math.min(activeCoupon.discount, subtotal);
   }
   return Math.round(discount * 100) / 100;
 }
@@ -618,7 +616,7 @@ function renderCartItems() {
   
   summary.innerHTML = `
     <div class="summary-row"><span>Subtotal:</span><span>R$ ${subtotal.toFixed(2)}</span></div>
-    <div class="summary-row"><span>Frete:</span><span>Grátis</span></div>
+    <div class="summary-row"><span>Frete:</span><span>A combinar no WhatsApp</span></div>
     ${discount > 0 ? `<div class="summary-row discount-row"><span>Desconto (${activeCoupon?.code || ''}):</span><span>- R$ ${discount.toFixed(2)}</span></div>` : ''}
     ${feeAmount > 0 ? `<div class="summary-row"><span>Juros cartão (${installments}x):</span><span>R$ ${feeAmount.toFixed(2)}</span></div>` : ''}
     ${activeCoupon ? `<div class="summary-row discount-row"><span>Cupom ${activeCoupon.code}:</span><span>- R$ ${discount.toFixed(2)}</span><button onclick="removeCoupon()" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-times"></i></button></div>` : ''}
@@ -742,7 +740,7 @@ function sendWhatsAppMessage(name, phone, items, total, orderId, discount, coupo
     msg += `${i+1}. ${item.name}${flavorText}\n   Quantidade: ${item.quantity}\n   Preço unitário: R$ ${toNumber(item.price).toFixed(2)}\n   Subtotal: R$ ${(toNumber(item.price) * item.quantity).toFixed(2)}\n\n`;
   });
   const subtotal = items.reduce((s, i) => s + toNumber(i.price) * i.quantity, 0);
-  msg += `*💰 RESUMO DO PEDIDO:*\nSubtotal: R$ ${subtotal.toFixed(2)}\nFrete: Grátis\n`;
+  msg += `*💰 RESUMO DO PEDIDO:*\nSubtotal: R$ ${subtotal.toFixed(2)}\nFrete: A combinar\n`;
   if (discount > 0) msg += `Desconto: R$ ${discount.toFixed(2)}\n`;
   if (feeAmount > 0) msg += `*Juros cartão (${installments}x):* R$ ${feeAmount.toFixed(2)}\n`;
   msg += `*TOTAL DO PEDIDO: R$ ${total.toFixed(2)}*\n\n`;
